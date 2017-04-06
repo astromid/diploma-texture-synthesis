@@ -15,6 +15,8 @@ from PIL import Image
 from os import listdir, mkdir
 from keras.models import load_model
 from keras.utils import plot_model
+from keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks import TensorBoard
 
 
 # load dataset, returns keras.ImageDataGenerators over train and validation
@@ -85,7 +87,37 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
             panorama_val[i] /= 127.5
 
         return (side1_train, side2_train, panorama_train,
-                side1_val, side2_val, panorama_val)
+                side1_val, side2_val, panorama_val, N_train, N_val)
+
+
+def one_image_generators(panorama_train, panorama_val, batch_size=50):
+    pan_train_gen = ImageDataGenerator().flow(panorama_train,
+                                              batch_size=batch_size)
+    pan_val_gen = ImageDataGenerator().flow(panorama_val,
+                                            batch_size=batch_size)
+    return (pan_train_gen, pan_val_gen)
+
+
+def three_image_generators(side1_train, side2_train, panorama_train,
+                           side1_val, side2_val, panorama_val, batch_size=50):
+    side1_train_gen = ImageDataGenerator().flow(side1_train,
+                                                batch_size=batch_size)
+    side2_train_gen = ImageDataGenerator().flow(side2_train,
+                                                batch_size=batch_size)
+    pan_train_gen = ImageDataGenerator().flow(panorama_train,
+                                              batch_size=batch_size)
+
+    side1_val_gen = ImageDataGenerator().flow(side1_val,
+                                              batch_size=batch_size)
+    side2_val_gen = ImageDataGenerator().flow(side2_val,
+                                              batch_size=batch_size)
+    pan_val_gen = ImageDataGenerator().flow(panorama_val,
+                                            batch_size=batch_size)
+
+    # генераторы, возвращающие тройки изображений
+    train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)
+    val_gen = zip(side1_val_gen, side2_val_gen, pan_val_gen)
+    return (train_gen, val_gen)
 
 
 def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
@@ -135,13 +167,13 @@ def plot_p2p_losses(models_path, trend_num, nn_name, losses):
     plt.savefig(path + '/' + nn_name + '/loss_train.png')
 
     plt.figure(figsize=(10, 5))
-    plt.plot(losses['dVal'], label='dVal')
-    plt.plot(losses['p2pVal'], label='p2pVal')
+    plt.plot(losses['d_val'], label='d_val')
+    plt.plot(losses['p2p_val'], label='p2p_val')
     plt.legend()
     plt.savefig(path + '/' + nn_name + '/loss_val.png')
 
 
-def generate_samples(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
+def gen_nn_output(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
     path = models_path + '/trend' + str(trend_num)
     try:
         mkdir(path + '/' + nn_name + '/nn_output')
@@ -169,5 +201,17 @@ def generate_samples(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
     return (side1_images, side2_images, pan_images, samples)
 
 
+def create_tb_callback(models_path, trend_num, nn_name):
+    path = models_path + '/trend' + str(trend_num) + '/' + nn_name + '/tb_logs'
+    tbCallback = TensorBoard(log_dir=path, histogram_freq=1, write_images=True)
+    return tbCallback
+
+
+# trend MSE metrcis
 def tr_mse(sample, tr_mse_0):
+    return 0
+
+
+# fit trend MSE metrics
+def tr_mse_fit(dataset):
     return 0

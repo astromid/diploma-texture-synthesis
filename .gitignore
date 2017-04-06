@@ -1,2 +1,6 @@
 
 data/sand/trend*
+
+code/__pycache__/
+
+code/\.ipynb_checkpoints/
