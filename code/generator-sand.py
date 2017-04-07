@@ -102,7 +102,7 @@ parser.add_argument('-AA', type=int, default=3)
 parser.add_argument('-l_start', type=float, default=0.1)
 parser.add_argument('-l_end', type=float, default=2)
 parser.add_argument('-r', type=int, default=3)
-parser.add_argument('-ratio', type=float, defalut=0.95)
+parser.add_argument('-ratio', type=float, default=0.95)
 args = parser.parse_args()
 
 # dataset images shape
