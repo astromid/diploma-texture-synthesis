@@ -91,28 +91,28 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
 
 def one_image_generators(panorama_train, panorama_val, batch_size=50):
-    pan_train_gen = ImageDataGenerator().flow(panorama_train,
-                                              batch_size=batch_size)
-    pan_val_gen = ImageDataGenerator().flow(panorama_val,
-                                            batch_size=batch_size)
+    pan_train_gen = ImageDataGenerator(
+            vertical_flip=True).flow(panorama_train, batch_size=batch_size)
+    pan_val_gen = ImageDataGenerator(
+            vertical_flip=True).flow(panorama_val, batch_size=batch_size)
     return (pan_train_gen, pan_val_gen)
 
 
 def three_image_generators(side1_train, side2_train, panorama_train,
                            side1_val, side2_val, panorama_val, batch_size=50):
-    side1_train_gen = ImageDataGenerator().flow(side1_train,
-                                                batch_size=batch_size)
-    side2_train_gen = ImageDataGenerator().flow(side2_train,
-                                                batch_size=batch_size)
-    pan_train_gen = ImageDataGenerator().flow(panorama_train,
-                                              batch_size=batch_size)
+    side1_train_gen = ImageDataGenerator(
+            vertical_flip=True).flow(side1_train, batch_size=batch_size)
+    side2_train_gen = ImageDataGenerator(
+            vertical_flip=True).flow(side2_train, batch_size=batch_size)
+    pan_train_gen = ImageDataGenerator(
+            vertical_flip=True).flow(panorama_train, batch_size=batch_size)
 
-    side1_val_gen = ImageDataGenerator().flow(side1_val,
-                                              batch_size=batch_size)
-    side2_val_gen = ImageDataGenerator().flow(side2_val,
-                                              batch_size=batch_size)
-    pan_val_gen = ImageDataGenerator().flow(panorama_val,
-                                            batch_size=batch_size)
+    side1_val_gen = ImageDataGenerator(
+            vertical_flip=True).flow(side1_val, batch_size=batch_size)
+    side2_val_gen = ImageDataGenerator(
+            vertical_flip=True).flow(side2_val, batch_size=batch_size)
+    pan_val_gen = ImageDataGenerator(
+            vertical_flip=True).flow(panorama_val, batch_size=batch_size)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)
@@ -208,10 +208,49 @@ def create_tb_callback(models_path, trend_num, nn_name):
 
 
 # trend MSE metrcis
-def tr_mse(sample, tr_mse_0):
-    return 0
+def tr_mse(sample, tr_mse_0, r):
+    # window width
+    window = 2 * r
+    W = sample.width
+    H = sample.height
+    pixel_map = sample.load()
+    steps = W - window + 1
+    err = np.zeros(steps)
+    for shift in range(steps):
+        window_sum = 0
+        for i in range(window):
+            for j in range(H):
+                window_sum += abs(pixel_map[shift+i, j] - 255) / 255
+        err[shift] = (window_sum - tr_mse_0[shift]) ** 2 / (window * H)
+    return (err.mean(), err)
 
 
 # fit trend MSE metrics
-def tr_mse_fit(dataset):
-    return 0
+def tr_mse_fit(dataset_path, trend_num, r):
+    dataset_path_with_trend = dataset_path + '/trend' + str(trend_num)
+    train_path = dataset_path_with_trend + '/train'
+    validation_path = dataset_path_with_trend + '/validation'
+    train_list = listdir(train_path + '/panorama')
+    val_list = listdir(validation_path + '/panorama')
+    N_train = len(train_list)
+    N_val = len(val_list)
+    print('Found {} train samples'.format(N_train))
+    print('Found {} validation samples'.format(N_val))
+    # just for parameter definition
+    img = Image.open(train_path + '/panorama/' + train_list[0])
+    W = img.width
+    window = 2 * r
+    steps = W - window + 1
+    train_mse = np.zeros(steps)
+    val_mse = np.zeros(steps)
+    for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
+            image = Image.open(train_path + '/panorama/' + file)
+            mse, err = tr_mse(image, np.zeros(steps), r)
+            train_mse += err
+    for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
+            image = Image.open(validation_path + '/panorama/' + file)
+            mse, err = tr_mse(image, np.zeros(steps), r)
+            val_mse += err
+    train_mse /= N_train
+    val_mse /= N_val
+    return (train_mse.mean(), val_mse.mean(), train_mse, val_mse)
