@@ -77,8 +77,8 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     p2p_gen_train = p2p_generator(train_gen, dout_size)
     p2p_gen_val = p2p_generator(val_gen, dout_size)
     losses = {'p2p': [], 'd': [], 'p2p_val': [], 'd_val': []}
-    steps_per_epoch = train_samples // batch_size
-    val_steps = val_samples // batch_size
+    steps_per_epoch = np.ceil(train_samples / batch_size)
+    val_steps = np.ceil(val_samples / batch_size)
     # train loop
     for e in tnrange(epochs, desc='Epoches'):
         train_iteration(d, p2p, d_gen_train, p2p_gen_train, losses,
