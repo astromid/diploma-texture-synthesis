@@ -1,6 +1,6 @@
 
 data/sand/trend*
-
+!data/sand/trend3/metrics
 code/__pycache__/
 
 code/\.ipynb_checkpoints/
