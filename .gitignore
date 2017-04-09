@@ -4,3 +4,17 @@ data/sand/trend*
 code/__pycache__/
 
 code/\.ipynb_checkpoints/
+
+*.aux
+
+*.nav
+
+*.out
+
+*.snm
+
+*.gz
+
+*.toc
+
+text/Universiade/presentation\.log
