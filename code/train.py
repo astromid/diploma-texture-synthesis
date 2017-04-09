@@ -4,7 +4,7 @@
 Created on Thu Apr  6 17:30:47 2017
 
 @author: ysbudakyan
-Fucntions to train NN
+Functions to train NN
 """
 
 import numpy as np

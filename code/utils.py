@@ -216,13 +216,15 @@ def tr_mse(sample, tr_mse_0, r):
     pixel_map = sample.load()
     steps = W - window + 1
     err = np.zeros(steps)
+    tr = np.zeros(steps)
     for shift in range(steps):
         window_sum = 0
         for i in range(window):
             for j in range(H):
                 window_sum += abs(pixel_map[shift+i, j] - 255) / 255
         err[shift] = (window_sum - tr_mse_0[shift]) ** 2 / (window * H)
-    return (err.mean(), err)
+        tr[shift] = (window_sum) ** 2 / (window * H)
+    return (err.mean(), err, tr)
 
 
 # fit trend MSE metrics
@@ -234,8 +236,8 @@ def tr_mse_fit(dataset_path, trend_num, r):
     val_list = listdir(validation_path + '/panorama')
     N_train = len(train_list)
     N_val = len(val_list)
-    print('Found {} train samples'.format(N_train))
-    print('Found {} validation samples'.format(N_val))
+    tqdm.write('Found {} train samples'.format(N_train))
+    tqdm.write('Found {} validation samples'.format(N_val))
     # just for parameter definition
     img = Image.open(train_path + '/panorama/' + train_list[0])
     W = img.width
@@ -245,11 +247,11 @@ def tr_mse_fit(dataset_path, trend_num, r):
     val_mse = np.zeros(steps)
     for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
             image = Image.open(train_path + '/panorama/' + file)
-            mse, err = tr_mse(image, np.zeros(steps), r)
+            mse, err, _ = tr_mse(image, np.zeros(steps), r)
             train_mse += err
     for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
             image = Image.open(validation_path + '/panorama/' + file)
-            mse, err = tr_mse(image, np.zeros(steps), r)
+            mse, err, _ = tr_mse(image, np.zeros(steps), r)
             val_mse += err
     train_mse /= N_train
     val_mse /= N_val

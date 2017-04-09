@@ -61,13 +61,13 @@
 
 \begin{frame}\frametitle{'Классический' статистический подход}
 	\begin{itemize}
-		\item Вводится параметризированное семество распределений вероятности $P_{\theta}(x)$
+		\item Вводится параметризированное семейство распределений вероятности $P_{\theta}(x)$
 		\item Параметры $\theta$ находятся из обучающей выборки:
 		$$ \mathcal{L}_{\theta}(D) = \prod_{x \in D} P_{\theta}(x) $$
 		$$ \theta^{*} = \underset{\theta}{\arg\max} \mathcal{L}_{\theta}(D)$$
 		\item Сгенерировать семпл из $ P_{\theta^{*}}$
 	\end{itemize}
-	Этот подход сталкивается с проблемами:
+	Этот подход приводит к проблемам:
 	\begin{itemize}
 		\item Пространство параметров $\theta$ может быть огромной размерности
 		\item Или же известной параметрической модели распределения может вообще не существовать
@@ -77,7 +77,7 @@
 
 \begin{frame}\frametitle{Первый нейросетевой подход}
 	\begin{itemize}
-		\item Вводится параметризированное семество распределений вероятности $P_{\theta}(x)$
+		\item Вводится параметризированное семейство распределений вероятности $P_{\theta}(x)$
 		\begin{itemize}
 			\item Вводятся скрытые переменные $V$ и функция(нейросеть) для получения $x$ из $V$ (фактически, классификация, развернутая в другую сторону)
 		\end{itemize}
@@ -106,7 +106,7 @@
 \begin{frame}\frametitle{GAN}
 	Остается вопрос: что использовать в качестве метрики похожести двух распределений $\rho$, где одно из распределений задано обучающей выборкой.
 	\begin{itemize}
-		\item В качестве метрики статистической похожести можно использовать обученный классификатор:
+		\item В качестве метрики статистической похожести можно использовать loss-функцию обученного классификатора:
 		$$ \rho(P_{X'}, P_X) \longrightarrow \min \Leftrightarrow \mathcal{L} \longrightarrow \max, $$
 		где $\mathcal{L}$ - функция потерь обученного классификатора.
 	\end{itemize}
@@ -115,10 +115,51 @@
 \begin{frame}\frametitle{GAN}
 	\begin{itemize}
 		\item Введем две нейросети:
+		\begin{itemize}
+			\item $d_{\zeta}(x)$ - классификатор для измерения расстояния, \textbf{дискриминатор}
+			\item $g_{\theta}(x)$ - сеть, трансформирующая $V$ в $x$, \textbf{генератор}
+		\end{itemize}
+		\item Введем loss-функцию дискриминатора(например, кросс-энтропия):
+		$$ L(X, X') = \frac{1}{2} \mathbb{E}_{x \sim X} l(d_{\zeta}(x), 1) + \frac{1}{2} \mathbb{E}_{x' \sim X'} l(d_{\zeta}(x'), 0) = $$
+		 $$ = -\frac{1}{2} (\mathbb{E}_{x \sim X} \log d_{\zeta}(x) + \mathbb{E}_{x' \sim X'} \log (1 - d_{\zeta}(x'))) = $$
+		 $$ =  -\frac{1}{2} (\mathbb{E}_{x \sim X} \log d_{\zeta}(x) + \mathbb{E}_{v \sim V} \log (1 - d_{\zeta}(g_{\theta}(v)))) = $$
+		 $$ = L(\zeta, \theta) $$
+		 \item Loss-функция обученного классификатора:
+		 $$ L^*(\theta) = \underset{\zeta}{\min} L(\zeta, \theta) $$
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{GAN}
+	\begin{itemize}
+		\item Соответственно,
+		 $$ \underset{\zeta}{\min} L(\zeta, \theta) \longrightarrow \underset{\theta}{\max} $$
+		 $$ \theta^* = \underset{\theta}{\arg\max} \left[ \underset{\zeta}{\min} L(\zeta, \theta) \right] $$
+		 \item Определим оптимальный дискриминатор:
+		 $$ d^*_{\theta} = d_{\zeta^*(\theta)} $$
+		 $$ \zeta^*(\theta) =  \underset{\zeta}{\arg\min} L(\zeta, \theta)$$
+	\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Обучение GAN}
+	В итоге, процесс обучения принимает следующий вид:
+	\begin{columns}
+		\column{0.5\linewidth}
+			\begin{center}
+				\begin{itemize}
+					\item Обучаем дискриминатор при 'замороженном' генераторе
+					\item Обучаем генератор при 'замороженном' дискриминаторе
+					\item Повторяем много раз
+				\end{itemize}
+			\end{center}
+			Схематически процесс обучения изображен на иллюстрации справа
+		\column{0.5\linewidth}
+			\centering{\includegraphics[width=0.8\linewidth]{gan-training}}
+	\end{columns}
+	
+\end{frame}
+
 \begin{frame}\frametitle{Критерий качества}
+	
 \end{frame}
 
 \begin{frame}\frametitle{Результаты, графики}
