@@ -175,7 +175,7 @@
 	\begin{columns}
 		\column{0.5\linewidth}
 			\begin{center}
-				$$\xi_k = \frac{1}{H w}{\sum_{i=k}^{k+w} \sum_{j=0}^{255}\left| \frac{x(i, j) - 255}{255} \right|}, $$$$k = \overline{1, W - w + 1} $$
+				$$\xi_k = \frac{1}{H w}{\sum_{i=k}^{k+w} \sum_{j=0}^{H}\left| \frac{x(i, j) - 255}{255} \right|}, $$$$k = \overline{1, W - w + 1} $$
 			\end{center}
 			Построив график $\xi(k)$ можно увидеть, как меняется плотность пикселей и прослеживается ли тренд. В качестве метрики можно взять среднеквадратичную ошибку:
 		\column{0.4\linewidth}
@@ -187,7 +187,7 @@
 		\column{0.5\linewidth}
 			$$ \xi = \frac{1}{W-w}\sum_{k=1}^{W-w+1} (\xi_k - \xi_{0k})^2,$$
 		\column{0.5\linewidth}
-			где $\xi_{ok}$ - $\xi_k$, усредненное по примерам из обучающей выборки
+			где $\xi_{ok}$ - $\xi_k$, усредненное по примерам из обучающей выборки.
 	\end{columns}
 \end{frame}
 

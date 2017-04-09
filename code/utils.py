@@ -180,6 +180,8 @@ def gen_nn_output(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
     except FileExistsError:
         print('Dir already exist')
     side1, side2, pan = next(dataGen)
+    if(n > pan.shape[0]):
+        n = pan.shape[0]
     input_data = np.concatenate((side1[:n], side2[:n]), axis=3)
     gen = f_gen.predict(input_data)
     side1_images = []
@@ -215,15 +217,14 @@ def tr_mse(sample, tr_mse_0, r):
     H = sample.height
     pixel_map = sample.load()
     steps = W - window + 1
-    err = np.zeros(steps)
     tr = np.zeros(steps)
     for shift in range(steps):
         window_sum = 0
         for i in range(window):
             for j in range(H):
                 window_sum += abs(pixel_map[shift+i, j] - 255) / 255
-        err[shift] = (window_sum - tr_mse_0[shift]) ** 2 / (window * H)
-        tr[shift] = (window_sum) ** 2 / (window * H)
+        tr[shift] = window_sum / (window * H)
+    err = (tr - tr_mse_0) ** 2
     return (err.mean(), err, tr)
 
 
@@ -255,4 +256,11 @@ def tr_mse_fit(dataset_path, trend_num, r):
             val_mse += err
     train_mse /= N_train
     val_mse /= N_val
+    try:
+        mkdir(dataset_path_with_trend + '/metrics')
+    except FileExistsError:
+        print('Dir already exist')
+    np.save(dataset_path_with_trend + 'metrics/tmse.npy', train_mse)
+    np.save(dataset_path_with_trend + 'metrics/vmse.npy', val_mse)
+    print('Metrics saved successfully.')
     return (train_mse.mean(), val_mse.mean(), train_mse, val_mse)
