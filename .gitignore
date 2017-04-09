@@ -18,3 +18,5 @@ code/\.ipynb_checkpoints/
 *.toc
 
 text/Universiade/presentation\.log
+
+text/Universiade/universiade\.log
