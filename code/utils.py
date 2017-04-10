@@ -13,7 +13,6 @@ import seaborn as sns
 from tqdm import tqdm
 from PIL import Image
 from os import listdir, mkdir
-from keras.models import load_model
 from keras.utils import plot_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard
@@ -38,14 +37,14 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
         panorama_train = np.empty((N_train, W, H, 1))
         for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
             image = Image.open(train_path + '/panorama/' + file)
-            panorama_train[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             panorama_train[i] /= 127.5
 
         # load and normalization validation images
         panorama_val = np.empty((N_val, W, H, 1))
         for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
             image = Image.open(validation_path + '/panorama/' + file)
-            panorama_val[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             panorama_val[i] /= 127.5
 
         return (panorama_train, panorama_val)
@@ -58,15 +57,15 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
         for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
             image = Image.open(train_path + '/side1/' + file)
-            side1_train[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            side1_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             side1_train[i] /= 127.5
 
             image = Image.open(train_path + '/side2/' + file)
-            side2_train[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            side2_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             side2_train[i] /= 127.5
 
             image = Image.open(train_path + '/panorama/' + file)
-            panorama_train[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             panorama_train[i] /= 127.5
 
         side1_val = np.empty((N_val, W, H, 1))
@@ -75,15 +74,15 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
         for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
             image = Image.open(validation_path + '/side1/' + file)
-            side1_val[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            side1_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             side1_val[i] /= 127.5
 
             image = Image.open(validation_path + '/side2/' + file)
-            side2_val[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            side2_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             side2_val[i] /= 127.5
 
             image = Image.open(validation_path + '/panorama/' + file)
-            panorama_val[i] = (np.array(image).T.reshape(W, H, 1)) - 127.5
+            panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
             panorama_val[i] /= 127.5
 
         return (side1_train, side2_train, panorama_train,
@@ -126,18 +125,16 @@ def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
         mkdir(path + '/' + nn_name)
     except FileExistsError:
         print('Dir already exist')
-    f_gen.save(path + '/' + nn_name + '/f_gen.h5')
     f_gen.save_weights(path + '/' + nn_name + '/f_gen.weights')
-    d.save(path + '/' + nn_name + '/d.h5')
     d.save_weights(path + '/' + nn_name + '/d.weights')
     np.save(path + '/' + nn_name + '/losses.npy', losses)
     print('Models saved successfully')
 
 
-def load_p2p_models(models_path, trend_num, nn_name):
+def load_p2p_models(models_path, trend_num, nn_name, f_gen, d):
     path = models_path + '/trend' + str(trend_num)
-    f_gen = load_model(path + '/' + nn_name + '/f_gen.h5')
-    d = load_model(path + '/' + nn_name + '/d.h5')
+    f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
+    d.load_weights(path + '/' + nn_name + '/d.weights')
     losses = np.load(path + '/' + nn_name + '/losses.npy').item()
     return (f_gen, d, losses)
 
@@ -191,10 +188,10 @@ def gen_nn_output(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
     pan_images = []
     samples = []
     for i in range(n):
-        curr_s1 = (127.5 * (side1[i].reshape(W, H).T) + 127.5).astype('uint8')
-        curr_s2 = (127.5 * (side2[i].reshape(W, H).T) + 127.5).astype('uint8')
-        curr_pan = (127.5 * (pan[i].reshape(W, H).T) + 127.5).astype('uint8')
-        curr_smpl = (127.5 * (gen[i].reshape(W, H).T) + 127.5).astype('uint8')
+        curr_s1 = (127.5 * side1[i].reshape(W, H) + 127.5).astype('uint8')
+        curr_s2 = (127.5 * side2[i].reshape(W, H) + 127.5).astype('uint8')
+        curr_pan = (127.5 * pan[i].reshape(W, H) + 127.5).astype('uint8')
+        curr_smpl = (127.5 * gen[i].reshape(W, H) + 127.5).astype('uint8')
         side1_images.append(Image.fromarray(curr_s1, mode='L'))
         side2_images.append(Image.fromarray(curr_s2, mode='L'))
         pan_images.append(Image.fromarray(curr_pan, mode='L'))
@@ -239,8 +236,6 @@ def tr_mse_fit(dataset_path, trend_num, r):
     val_list = listdir(validation_path + '/panorama')
     N_train = len(train_list)
     N_val = len(val_list)
-    tqdm.write('Found {} train samples'.format(N_train))
-    tqdm.write('Found {} validation samples'.format(N_val))
     # just for parameter definition
     img = Image.open(train_path + '/panorama/' + train_list[0])
     W = img.width

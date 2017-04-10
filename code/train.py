@@ -46,7 +46,7 @@ def p2p_generator(data_gen, dout_size):
 
 
 def train_p2p(p2p, data_gen, steps_per_epoch=40):
-    return p2p.fit_generator(data_gen, steps_per_epoch=steps_per_epoch,
+    return p2p.fit_generator(data_gen, steps_per_epoch=steps_per_epoch*2,
                              epochs=1, verbose=1)
 
 
