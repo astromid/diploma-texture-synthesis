@@ -100,12 +100,12 @@
 				\item Параметры $\theta$ находятся из обучающей выборки:
 				$$ \mathcal{L}_{\theta}(D) = \prod_{x \in D} P_{\theta}(x) $$
 				$$ \theta^{*} = \underset{\theta}{\arg\max} \mathcal{L}_{\theta}(D)$$
-				\item Сгенерировать семпл из $ P_{\theta^{*}}$
+				\item Генерируется семпл из $ P_{\theta^{*}}$
 			\end{itemize}
 			Этот подход приводит к проблемам:
 			\begin{itemize}
 				\item Пространство параметров $\theta$ может быть огромной размерности
-				\item Или же известной параметрической модели распределения может вообще не существовать
+				\item Известной параметрической модели распределения может вообще не существовать
 			\end{itemize}
 			Простой пример - генерирование человеческих лиц, похожих на реальные: параметрической модели для такой задачи не существует.
 		\subsection{Базовый нейросетевой подход}
@@ -193,6 +193,90 @@
 		\\
 		Построив график $\xi(k)$ можно увидеть, как меняется плотность пикселей и прослеживается ли тренд. В качестве метрики можно взять среднеквадратичную ошибку:
 		$$ \xi = \frac{1}{W-w}\sum_{k=1}^{W-w+1} (\xi_k - \xi_{0k})^2,$$
-		где $\xi_{ok}$ - $\xi_k$, усредненное по примерам из обучающей выборки.
+		где $\xi_{0k}$ - $\xi_k$, усредненное по примерам из обучающей выборки.
 	\section{Результаты}
+		Было проведено обучение нейросети описанной архитектуры при различных гиперпараметрах. Обучающей выборкой был массив из 3500 троек изображений. Примеры сгенерированных текстур приведены на (Рис. 5).
+		\begin{figure}
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf8} \\ nf8}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16} \\ nf16}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16_woUnet} \\ nf16-woUnet}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16_3x3_woUnet} \\ nf16-3x3-woUnet}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf32} \\ nf32}
+				\end{minipage}
+				\hfill
+				\begin{minipage}{0.3\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf32_woUnet} \\ nf32-woUnet}
+				\end{minipage}
+				\caption{Примеры сгенерированных текстур}
+			\end{figure}
+			Была подсчитана введенная метрика для сгенерированных наборов текстур. Графики плотности черных пикселей в зависимости от сдвига окна, квадратичного отклонения от тренда и сами значения метрики приведены на (Рис. 6, 7, 8, 9) и в (Таб. 1, 2)
+			\begin{center}
+				\begin{figure}
+					\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{tr_1}
+					\caption{Плотность черных пикселей в окне в зависимости от сдвига окна}
+				\end{figure}
+			\end{center}
+			\begin{table}[h]
+				\begin{center}
+					\begin{tabular}{|c|c|}
+						\hline
+						Сеть & Метрика \\
+						\hline
+						nf8 & 0.00825\\
+						\hline
+						nf32 & 0.00549\\
+						\hline
+						nf32-woUnet & 0.00688\\
+						\hline
+					\end{tabular}
+					\caption{Значения введенной метрики для разных сетей}
+				\end{center}
+			\end{table}
+			\begin{center}
+				\begin{figure}
+					\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{tr_2}
+					\caption{Плотность черных пикселей в окне в зависимости от сдвига окна}
+			\end{figure}
+			\end{center}
+			\begin{table}[h]
+				\begin{center}
+					\begin{tabular}{|c|c|}
+						\hline
+						Сеть & Метрика \\
+						\hline
+						nf16 & 0.00606\\
+						\hline
+						nf16-woUnet & 0.00881\\
+						\hline
+						nf16-3x3-woUnet & 0.01034\\
+						\hline
+					\end{tabular}
+					\caption{Значения введенной метрики для разных сетей}
+				\end{center}
+			\end{table}
+			\begin{center}
+				\begin{figure}[h]
+					\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{earr_1}
+					\caption{Квадратичное отклонение от тренда для разных сетей}
+				\end{figure}
+				\begin{figure}[h]
+					\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{earr_2}
+					\caption{Квадратичное отклонение от тренда для разных сетей}
+					\end{figure}
+			\end{center}
+	\section{Заключение}
+		Полученные результаты показывают, что в принципе нейросеть способна уловить тренд и воспроизвести его, однако на данный момент качество генерации относительно невысоко. Необходимо провести дальнешее исследование оптимальных гиперпараметров, и, возможно, увеличить объем обучающей выборки. Также можно провести аналогичные эксперименты с другими архитектурами генераторов.
 \end{document}

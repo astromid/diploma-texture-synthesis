@@ -66,12 +66,12 @@
 		\item Параметры $\theta$ находятся из обучающей выборки:
 		$$ \mathcal{L}_{\theta}(D) = \prod_{x \in D} P_{\theta}(x) $$
 		$$ \theta^{*} = \underset{\theta}{\arg\max} \mathcal{L}_{\theta}(D)$$
-		\item Сгенерировать семпл из $ P_{\theta^{*}}$
+		\item Генерируется семпл из $ P_{\theta^{*}}$
 	\end{itemize}
 	Этот подход приводит к проблемам:
 	\begin{itemize}
 		\item Пространство параметров $\theta$ может быть огромной размерности
-		\item Или же известной параметрической модели распределения может вообще не существовать
+		\item Известной параметрической модели распределения может вообще не существовать
 	\end{itemize}
 	Простой пример - генерирование человеческих лиц, похожих на реальные: параметрической модели для такой задачи не существует.
 \end{frame}
@@ -161,7 +161,7 @@
 \end{frame}
 
 \begin{frame}\frametitle{pix2pix GAN}
-	Для решения задачи было попробовано применить модификацию GAN-сети под названием "pix2pix GAN". Для нее функционал потерь выглядит следующим образом: $$ \mathcal{L}(G, D) = \mathcal{L}_{adv}(G, D) + \eta \mathbb{E}_{s_1, s_2, r \sim p_{data}(s_1, s_2, r)} (\parallel r - G(s_1, s_2) \parallel_1)$$
+	Для решения задачи было попробовано применить модификацию GAN-сети под названием "pix2pix GAN". Общий функционал потерь для pix2pix GAN выглядит следующим образом: $$ \mathcal{L}(G, D) = \mathcal{L}_{adv}(G, D) + \eta \mathbb{E}_{s_1, s_2, r \sim p_{data}(s_1, s_2, r)} (\parallel r - G(s_1, s_2) \parallel_1)$$
 	$$ \mathcal{L}_{adv}(G, D) = \mathbb{E}_{s_1, s_2, r \sim p_{data}(s_1, s_2, r)}\log D(s_1, s_2, r) + $$ $$ + \mathbb{E}_{s_1, s_2 \sim p_{data}(s_1, s_2)} \log (1 - D(s_1, s_2, G(s_1, s_2)))$$
 	где G, D - генератор и дискриминатор, $(s_1, s_2, r)$ - тройка изображений (интенсивность слева, справа и реальное изображение с трендом),  $\mathbb{E}_{s_1, s_2, r \sim p_{data}(s_1, s_2, r)}$ - мат. ожидание логарифмического правдоподобия того, что тройка изображений $(s_1, s_2, r)$ принадлежит вероятностному распределению реальных троек $p_{data}(s_1, s_2, r)$, а $p_{data}(s_1, s_2)$ соответствует распределению реальных изображений $s_1, s_2$. \\
 	\begin{figure}
@@ -187,18 +187,80 @@
 		\column{0.5\linewidth}
 			$$ \xi = \frac{1}{W-w}\sum_{k=1}^{W-w+1} (\xi_k - \xi_{0k})^2,$$
 		\column{0.5\linewidth}
-			где $\xi_{ok}$ - $\xi_k$, усредненное по примерам из обучающей выборки.
+			где $\xi_{0k}$ - $\xi_k$, усредненное по примерам из обучающей выборки.
 	\end{columns}
 \end{frame}
 
-\begin{frame}\frametitle{Результаты, графики}
-	
+\begin{frame}\frametitle{Результаты}
+	Было проведено обучение нейросети описанной архитектуры при различных гиперпараметрах. Обучающей выборкой был массив из 3500 троек изображений.
+	\begin{figure}
+		\begin{columns}
+			\column{0.33\linewidth}
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf8} \\ nf8}
+				\end{minipage}
+				\vfill
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16} \\ nf16}
+				\end{minipage}
+			\column{0.33\linewidth}
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16_woUnet} \\ nf16-woUnet}
+				\end{minipage}
+				\vfill
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf16_3x3_woUnet} \\ nf16-3x3-woUnet}
+				\end{minipage}
+			\column{0.33\linewidth}
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf32} \\ nf32}
+				\end{minipage}
+				\vfill
+				\begin{minipage}{1\linewidth}
+					\centering{\includegraphics[width=0.75\linewidth]{nf32_woUnet} \\ nf32-woUnet}
+				\end{minipage}
+		\end{columns}
+		\caption{Примеры сгенерированных текстур}
+	\end{figure}
 \end{frame}
 
-\begin{frame}\frametitle{Графики-2}
+\begin{frame}\frametitle{Результаты}
+	Для сгенерированных наборов текстур получились следующие результаты:
+	\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{tr_1}
+	\begin{table}[h]
+		\begin{tabular}{|c|c|}
+			\hline
+			Сеть & Метрика \\
+			\hline
+			nf8 & 0.00825\\
+			\hline
+			nf32 & 0.00549\\
+			\hline
+			nf32-woUnet & 0.00688\\
+			\hline
+		\end{tabular}
+	\end{table}
 \end{frame}
 
-\begin{frame}\frametitle{Выводы}
+\begin{frame}\frametitle{Результаты}
+	\includegraphics[width=0.95\linewidth,height=0.5\textwidth]{tr_2}
+	\begin{table}[h]
+		\begin{tabular}{|c|c|}
+			\hline
+			Сеть & Метрика \\
+			\hline
+			nf16 & 0.00606\\
+			\hline
+			nf16-woUnet & 0.00881\\
+			\hline
+			nf16-3x3-woUnet & 0.01034\\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}\frametitle{Заключение}
+	Полученные результаты показывают, что в принципе нейросеть способна уловить тренд и воспроизвести его, однако на данный момент качество генерации относительно невысоко. Необходимо провести дальнешее исследование оптимальных гиперпараметров, и, возможно, увеличить объем обучающей выборки. Также можно провести аналогичные эксперименты с другими архитектурами генераторов.
 \end{frame}
 
 \end{document}
