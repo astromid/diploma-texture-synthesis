@@ -101,18 +101,18 @@ def one_image_generators(panorama_train, panorama_val, batch_size=50):
 def three_image_generators(side1_train, side2_train, panorama_train,
                            side1_val, side2_val, panorama_val, batch_size=50):
     side1_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_train, batch_size=batch_size)
+            vertical_flip=False).flow(side1_train, batch_size=batch_size)
     side2_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_train, batch_size=batch_size)
+            vertical_flip=False).flow(side2_train, batch_size=batch_size)
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_train, batch_size=batch_size)
+            vertical_flip=False).flow(panorama_train, batch_size=batch_size)
 
     side1_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_val, batch_size=batch_size)
+            vertical_flip=False).flow(side1_val, batch_size=batch_size)
     side2_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_val, batch_size=batch_size)
+            vertical_flip=False).flow(side2_val, batch_size=batch_size)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_val, batch_size=batch_size)
+            vertical_flip=False).flow(panorama_val, batch_size=batch_size)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)
@@ -127,7 +127,9 @@ def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
     except FileExistsError:
         print('Dir already exist')
     f_gen.save(path + '/' + nn_name + '/f_gen.h5')
+    f_gen.save_weights(path + '/' + nn_name + '/f_gen.weights')
     d.save(path + '/' + nn_name + '/d.h5')
+    d.save_weights(path + '/' + nn_name + '/d.weights')
     np.save(path + '/' + nn_name + '/losses.npy', losses)
     print('Models saved successfully')
 
@@ -260,7 +262,7 @@ def tr_mse_fit(dataset_path, trend_num, r):
         mkdir(dataset_path_with_trend + '/metrics')
     except FileExistsError:
         print('Dir already exist')
-    np.save(dataset_path_with_trend + 'metrics/tmse.npy', train_mse)
-    np.save(dataset_path_with_trend + 'metrics/vmse.npy', val_mse)
+    np.save(dataset_path_with_trend + '/metrics/tmse.npy', train_mse)
+    np.save(dataset_path_with_trend + '/metrics/vmse.npy', val_mse)
     print('Metrics saved successfully.')
     return (train_mse.mean(), val_mse.mean(), train_mse, val_mse)

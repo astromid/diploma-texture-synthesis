@@ -9,6 +9,7 @@ Functions to train NN
 
 import numpy as np
 from tqdm import tnrange
+from IPython.display import clear_output
 
 
 # generator of labeled data for discriminator training
@@ -81,6 +82,7 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     val_steps = np.ceil(val_samples / batch_size)
     # train loop
     for e in tnrange(epochs, desc='Epoches'):
+        clear_output()
         train_iteration(d, p2p, d_gen_train, p2p_gen_train, losses,
                         steps_per_epoch)
         # evaluate metrics
