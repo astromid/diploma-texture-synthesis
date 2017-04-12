@@ -184,6 +184,11 @@
 			\caption{Вход и желаемый выход нейросети-генератора.}
 			\label{p2p-gen}
 		\end{figure}
+		\begin{figure}
+			\centering{\includegraphics[width=1\linewidth]{unet-scheme}}
+			\caption{Схематическое изображение нейросети-генератора.}
+			\label{unet-sheme}
+		\end{figure}
 	\section{Критерий качества}
 		После обучения генератора, необходимо проверить, что сгенерированные им изображения действительно имеют искомые характеристики. Для этого нужно ввести специальную метрику, которая будет учитывать наличие в изображении тренда интенсивности частиц. Было решено использовать среднюю плотность черных пикселей в некотором окне, и проходить этим окном по изображению (Рис. \ref{window}):
 		\newpage
@@ -198,7 +203,7 @@
 		$$ \xi = \frac{1}{W-w}\sum_{k=1}^{W-w+1} (\xi_k - \xi_{0k})^2,$$
 		где $\xi_{0k}$ - это $\xi_k$, усредненное по примерам из обучающей выборки. Соответственно, чем меньше значение метрики, тем лучше тренд, присутствующий на сгенерированном изображении, приближает искомый.
 	\section{Результаты}
-		Было проведено обучение нейросети описанной архитектуры при различных гиперпараметрах. Обучающей выборкой был массив из 3500 троек изображений. Примеры сгенерированных текстур приведены на (Рис. \ref{generated}).
+		Было проведено обучение нейросети описанной архитектуры при различных гиперпараметрах (в частности, количестве фильтров на первом сверточном слое). Обучающей выборкой был массив из 3500 троек изображений. Примеры сгенерированных текстур приведены на (Рис. \ref{generated}).
 		\begin{figure}
 			\begin{minipage}{0.3\linewidth}
 				\centering{\includegraphics[width=0.75\linewidth]{nf8} \\ nf8}
@@ -293,9 +298,9 @@
 		Полученные результаты показывают, что в принципе нейросеть способна уловить тренд и воспроизвести его, однако на данный момент качество генерации относительно невысоко. Необходимо провести дальнешее исследование оптимальных гиперпараметров, и, возможно, увеличить объем обучающей выборки. Также можно провести аналогичные эксперименты с другими архитектурами генераторов.
 	\begin{thebibliography}{99}
 		\bibitem{Voron-ML}  Воронцов К. В., "Математические методы обучения по прецедентам (теория обучения машин)".
-		\bibitem{GAN} Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bign Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio, "Generative Adversarial Nets". arXiv: 1406.2661 [stat.ML], 2014
+		\bibitem{GAN} Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bign Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio, "Generative Adversarial Nets" // arXiv: 1406.2661 [stat.ML], 2014
 		\bibitem{GAN-2} Goodfellow, Ian, et al. "Generative adversarial nets. Advances in neural information processing systems". 2014
-		\bibitem{p2p} Pedro Costa, Adrian Galdran, Maria Inês Meyer, Michael David Abràmoff, Meindert Niemeijer, Ana Maria Mendonça, Aurélio Campilho, "Towards Adversarial Retinal Image Synthesis". arXiv: 1701.08974 [cs.CV], 2017
-	
-\end{thebibliography}
+		\bibitem{p2p} Pedro Costa, Adrian Galdran, Maria Inês Meyer, Michael David Abràmoff, Meindert Niemeijer, Ana Maria Mendonça, Aurélio Campilho, "Towards Adversarial Retinal Image Synthesis" // arXiv: 1701.08974 [cs.CV], 2017
+		\bibitem{Bishop} Christopher M. Bishop, "Pattern Recognition and Machine Learning". Springer Science+Business Media, 2006.
+	\end{thebibliography}
 \end{document}
