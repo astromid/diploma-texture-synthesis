@@ -14,9 +14,10 @@ from numpy.random import choice, rand
 from math import log
 from tqdm import tqdm
 from os import mkdir
+from joblib import Parallel, delayed
 
 
-def generate_sample(w, h, l, num, AA, val=False, side=1):
+def generate_sample(w, h, l, num, AA, val=False, side=1, save=True):
     # новое ч/б изображение, размером в AA**2 раз больше для суперсэмплинга
     W = w * AA
     H = h * AA
@@ -39,14 +40,15 @@ def generate_sample(w, h, l, num, AA, val=False, side=1):
     draw = ImageDraw.Draw(image)
     # карта заполнения, чтобы предотвратить взаимопроникновение "песчинок"
     pixel_map = image.load()
-    # цикл по x-ам
-    for x in tqdm(range(W), desc='Side ' + str(side), leave=False):
+    # x's loop
+    # for x in tqdm(range(W), desc='Side ' + str(side), leave=False):
+    for x in range(W):
         # находим недоступные на данный момент y
         banned_y = set()
         for y in range(H):
             ban_cond = 0
             for j in range(R + 1):
-                # условия недоступности y
+                # banned y's conditions
                 if (x - j > 0):
                     c_left = pixel_map[x - j, y]
                 else:
@@ -69,28 +71,31 @@ def generate_sample(w, h, l, num, AA, val=False, side=1):
         # заполняем вертикаль
         free_y = set(range(W)) - banned_y
         for j in range(X[x]):
-            # генерируем y из доступных значений
+            # generate y from avalible values
             if (len(free_y) != 0):
                 y = choice(list(free_y))
                 draw.ellipse((x - R, y - R, x + R, y + R), fill='black')
                 free_y -= set(range(y - R, y + R + 1))
             else:
                 break
-    # суперсэмплинг с антиалиасингом
+    # supersampling with antialiasing
     image = image.resize((w, h))
-    full_file_path = file_path
-    if (val is False):
-        full_file_path += "/train"
+    if (save is True):
+        full_file_path = file_path
+        if (val is False):
+            full_file_path += "/train"
+        else:
+            full_file_path += "/validation"
+        if (side == 1):
+            full_file_path += "/side1"
+        elif (side == 2):
+            full_file_path += "/side2"
+        else:
+            full_file_path += "/panorama"
+        full_file_path += (file_name + str(num) + ext)
+        image.save(full_file_path)
     else:
-        full_file_path += "/validation"
-    if (side == 1):
-        full_file_path += "/side1"
-    elif (side == 2):
-        full_file_path += "/side2"
-    else:
-        full_file_path += "/panorama"
-    full_file_path += (file_name + str(num) + ext)
-    image.save(full_file_path)
+        return image
 
 # parsing arguments
 parser = argparse.ArgumentParser()
@@ -99,10 +104,11 @@ parser.add_argument('trend_num', type=int)
 parser.add_argument('-W', type=int, default=256)
 parser.add_argument('-H', type=int, default=256)
 parser.add_argument('-AA', type=int, default=3)
-parser.add_argument('-l_start', type=float, default=0.1)
-parser.add_argument('-l_end', type=float, default=2)
+parser.add_argument('-l_0', type=list, default=[0.1, 0.3, 0.5, 0.7, 0.9, 1.1])
+parser.add_argument('-l_1', type=list, default=[1.6, 1.8, 2.0, 2.2, 2.4, 2.6])
 parser.add_argument('-r', type=int, default=3)
 parser.add_argument('-ratio', type=float, default=0.95)
+parser.add_argument('-shift', type=int, default=0)
 args = parser.parse_args()
 
 # dataset images shape
@@ -111,9 +117,8 @@ H = args.H
 # antialiasing coeff
 AA = args.AA
 # linear trend l = lambda = Kx + b
-l_start = args.l_start
-l_end = args.l_end
-K = (l_end - l_start) / (W * AA)
+l_0 = args.l_0
+l_1 = args.l_1
 # radius
 r = args.r
 # filename & path
@@ -121,6 +126,7 @@ file_name = "/sample"
 ext = ".jpg"
 trend_num = args.trend_num
 file_path = "../data/sand/trend" + str(trend_num)
+shift = args.shift
 
 # making directory structure
 try:
@@ -139,16 +145,47 @@ except FileExistsError:
 
 # number of samples to generate
 N = args.N
-# train/validation = 80/20
 N_train = int(args.ratio * N)
 N_val = N - N_train
 
 for i in tqdm(range(N_train), desc='Train dataset'):
-    generate_sample(W, H, lambda x: l_start, i, AA, val=False, side=1)
-    generate_sample(W, H, lambda x: l_end, i, AA, val=False, side=2)
-    generate_sample(W, H, lambda x: l_start + K * x, i, AA, val=False, side=3)
+    l_start = choice(l_0)
+    l_end = choice(l_1)
+    K = (l_end - l_start) / (W * AA)
+
+    def l0(x):
+        return l_start
+
+    def l1(x):
+        return l_end
+
+    def l_trend(x):
+        return l_start + K * x
+
+    ag = zip((l0, l1, l_trend), (1, 2, 3))
+    Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i+shift, AA, False,
+                        side, True) for l, side in ag)
+    # generate_sample(W, H, l0, AA, val=False, side=1)
+    # generate_sample(W, H, l1, i + shift, AA, val=False, side=2)
+    # generate_sample(W, H, l_trend, i + shift, AA, val=False, side=3)
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
-    generate_sample(W, H, lambda x: l_start, i, AA, val=True, side=1)
-    generate_sample(W, H, lambda x: l_end, i, AA, val=True, side=2)
-    generate_sample(W, H, lambda x: l_start + K * x, i, AA, val=True, side=3)
+    l_start = choice(l_0)
+    l_end = choice(l_1)
+    K = (l_end - l_start) / (W * AA)
+
+    def l0(x):
+        return l_start
+
+    def l1(x):
+        return l_end
+
+    def l_trend(x):
+        return l_start + K * x
+
+    ag = zip((l0, l1, l_trend), (1, 2, 3))
+    Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i+shift, AA, True,
+                        side, True) for l, side in ag)
+    # generate_sample(W, H, l0, i + shift, AA, val=True, side=1)
+    # generate_sample(W, H, l1, i + shift, AA, val=True, side=2)
+    # generate_sample(W, H, l_trend, i + shift, AA, val=True, side=3)

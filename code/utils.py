@@ -91,27 +91,35 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
 def one_image_generators(panorama_train, panorama_val, batch_size=50):
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_train, batch_size=batch_size)
+            vertical_flip=True).flow(panorama_train,
+                                     batch_size=batch_size, shuffle=False)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_val, batch_size=batch_size)
+            vertical_flip=True).flow(panorama_val,
+                                     batch_size=batch_size, shuffle=False)
     return (pan_train_gen, pan_val_gen)
 
 
 def three_image_generators(side1_train, side2_train, panorama_train,
                            side1_val, side2_val, panorama_val, batch_size=50):
     side1_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_train, batch_size=batch_size)
+            vertical_flip=True).flow(side1_train,
+                                     batch_size=batch_size, shuffle=False)
     side2_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_train, batch_size=batch_size)
+            vertical_flip=True).flow(side2_train,
+                                     batch_size=batch_size, shuffle=False)
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_train, batch_size=batch_size)
+            vertical_flip=True).flow(panorama_train,
+                                     batch_size=batch_size, shuffle=False)
 
     side1_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_val, batch_size=batch_size)
+            vertical_flip=True).flow(side1_val,
+                                     batch_size=batch_size, shuffle=False)
     side2_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_val, batch_size=batch_size)
+            vertical_flip=True).flow(side2_val,
+                                     batch_size=batch_size, shuffle=False)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_val, batch_size=batch_size)
+            vertical_flip=True).flow(panorama_val,
+                                     batch_size=batch_size, shuffle=False)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)
