@@ -10,6 +10,7 @@ Functions to train NN
 import numpy as np
 from tqdm import tnrange
 from IPython.display import clear_output
+from keras.callbacks import ReduceLROnPlateau
 
 
 # generator of labeled data for discriminator training
@@ -32,9 +33,9 @@ def d_generator(data_gen, atob, dout_size):
         yield batch_x, batch_y
 
 
-def train_discriminator(d, data_gen, steps_per_epoch=40):
+def train_discriminator(d, data_gen, steps_per_epoch=40, cb=[]):
     return d.fit_generator(data_gen, steps_per_epoch=steps_per_epoch,
-                           epochs=1, verbose=1)
+                           epochs=1, verbose=1, callbacks=cb)
 
 
 # generator for pix2pix net
@@ -45,9 +46,9 @@ def p2p_generator(data_gen, dout_size):
         yield [a1, a2, b], y
 
 
-def train_p2p(p2p, data_gen, steps_per_epoch=40):
-    return p2p.fit_generator(data_gen, steps_per_epoch=steps_per_epoch*2,
-                             epochs=1, verbose=1)
+def train_p2p(p2p, data_gen, steps_per_epoch=40, cb=[]):
+    return p2p.fit_generator(data_gen, steps_per_epoch=steps_per_epoch,
+                             epochs=1, verbose=1, callbacks=cb)
 
 
 def metrics(d_gen, p2p_gen, d, p2p, losses, val_steps):
@@ -58,12 +59,13 @@ def metrics(d_gen, p2p_gen, d, p2p, losses, val_steps):
     return d_loss, p2p_loss
 
 
-def train_iteration(d, p2p, d_gen, p2p_gen, losses, steps_per_epoch):
+def train_iteration(d, p2p, d_gen, p2p_gen, losses, steps_per_epoch,
+                    cb_d, cb_p2p):
     # discriminator
-    d_hist = train_discriminator(d, d_gen, steps_per_epoch)
+    d_hist = train_discriminator(d, d_gen, steps_per_epoch, cb_d)
     losses['d'].extend(d_hist.history['loss'])
     # generator
-    p2p_hist = train_p2p(p2p, p2p_gen, steps_per_epoch)
+    p2p_hist = train_p2p(p2p, p2p_gen, steps_per_epoch, cb_p2p)
     losses['p2p'].extend(p2p_hist.history['loss'])
 
 
@@ -80,11 +82,16 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     losses = {'p2p': [], 'd': [], 'p2p_val': [], 'd_val': []}
     steps_per_epoch = np.ceil(train_samples / batch_size)
     val_steps = np.ceil(val_samples / batch_size)
+    # create callbacks
+    reduce_lr_d = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                                    patience=5, min_lr=1e-6)
+    reduce_lr_p2p = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                                      patience=5, min_lr=1e-6)
     # train loop
     for e in tnrange(epochs, desc='Epoches'):
         clear_output()
         train_iteration(d, p2p, d_gen_train, p2p_gen_train, losses,
-                        steps_per_epoch)
+                        steps_per_epoch, [reduce_lr_d], [reduce_lr_p2p])
         # evaluate metrics
         metrics(d_gen_val, p2p_gen_val, d, p2p, losses, val_steps)
     return losses
