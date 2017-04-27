@@ -83,10 +83,10 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     steps_per_epoch = np.ceil(train_samples / batch_size)
     val_steps = np.ceil(val_samples / batch_size)
     # create callbacks
-    reduce_lr_d = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                                    patience=5, min_lr=1e-6)
-    reduce_lr_p2p = ReduceLROnPlateau(monitor='val_loss', factor=0.2,
-                                      patience=5, min_lr=1e-6)
+    reduce_lr_d = ReduceLROnPlateau(monitor='loss', factor=0.2,
+                                    patience=5, min_lr=1e-7)
+    reduce_lr_p2p = ReduceLROnPlateau(monitor='loss', factor=0.2,
+                                      patience=5, min_lr=1e-7)
     # train loop
     for e in tnrange(epochs, desc='Epoches'):
         clear_output()
