@@ -11,11 +11,81 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
-from PIL import Image
+from PIL import Image, ImageDraw
+from numpy.random import choice, rand
+from math import log
 from os import listdir, mkdir
 from keras.utils import plot_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard
+from joblib import Parallel, delayed
+
+
+def generate_sample(w, h, l, num, AA, r):
+    np.random.seed()
+    # новое ч/б изображение, размером в AA**2 раз больше для суперсэмплинга
+    W = w * AA
+    H = h * AA
+    R = r * AA
+    # generate x and counts
+    X = np.zeros(W)
+    l_u = l(W)
+    x = 0
+    while(int(x) < W):
+        u1 = rand()
+        x -= log(u1) / l_u
+        u2 = rand()
+        if (u2 <= l(x) / l_u):
+            try:
+                X[int(x)] += 1
+            except IndexError:
+                break
+    X = X.astype('int')
+    image = Image.new('1', (W, H), 'white')
+    draw = ImageDraw.Draw(image)
+    # карта заполнения, чтобы предотвратить взаимопроникновение "песчинок"
+    pixel_map = image.load()
+    # x's loop
+    # for x in tqdm(range(W), desc='Side ' + str(side), leave=False):
+    for x in range(W):
+        # находим недоступные на данный момент y
+        banned_y = set()
+        for y in range(H):
+            ban_cond = 0
+            for j in range(R + 1):
+                # banned y's conditions
+                if (x - j > 0):
+                    c_left = pixel_map[x - j, y]
+                else:
+                    c_left = True
+                if (x + j < W - 1):
+                    c_right = pixel_map[x + j, y]
+                else:
+                    c_right = True
+                if (y - j > 0):
+                    c_top = pixel_map[x, y - j]
+                else:
+                    c_top = True
+                if (y + j < H - 1):
+                    c_bot = pixel_map[x, y + j]
+                else:
+                    c_bot = True
+                free_cond = ban_cond or c_left or c_right or c_top or c_bot
+            if(not(free_cond)):
+                banned_y.add(y)
+        # заполняем вертикаль
+        free_y = set(range(W)) - banned_y
+        for j in range(X[x]):
+            # generate y from avalible values
+            if (len(free_y) != 0):
+                y = choice(list(free_y))
+                draw.ellipse((x - R, y - R, x + R, y + R), fill='black')
+                free_y -= set(range(y - R, y + R + 1))
+            else:
+                break
+    # supersampling with antialiasing
+    image = image.resize((w, h))
+    return image
 
 
 # load dataset, returns keras.ImageDataGenerators over train and validation
@@ -180,34 +250,39 @@ def plot_p2p_losses(models_path, trend_num, nn_name, losses):
     plt.savefig(path + '/' + nn_name + '/loss_val.png')
 
 
-def gen_nn_output(models_path, trend_num, nn_name, f_gen, dataGen, n, W, H):
-    path = models_path + '/trend' + str(trend_num)
+def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
+                    l_trend):
+    path = models_path + '/trend' + str(trend_num) + '/' + nn_name
+    AA = 3
+    r = 3
+
     try:
-        mkdir(path + '/' + nn_name + '/nn_output')
+        mkdir(path + '/verification')
+        mkdir(path + '/verification' + '/side1')
+        mkdir(path + '/verification' + '/side2')
+        mkdir(path + '/verification' + '/panorama')
+        mkdir(path + '/verification' + '/nn_output')
     except FileExistsError:
         print('Dir already exist')
-    side1, side2, pan = next(dataGen)
-    if(n > pan.shape[0]):
-        n = pan.shape[0]
-    input_data = np.concatenate((side1[:n], side2[:n]), axis=3)
-    gen = f_gen.predict(input_data)
-    side1_images = []
-    side2_images = []
-    pan_images = []
-    samples = []
-    for i in range(n):
-        curr_s1 = (127.5 * side1[i].reshape(W, H) + 127.5).astype('uint8')
-        curr_s2 = (127.5 * side2[i].reshape(W, H) + 127.5).astype('uint8')
-        curr_pan = (127.5 * pan[i].reshape(W, H) + 127.5).astype('uint8')
-        curr_smpl = (127.5 * gen[i].reshape(W, H) + 127.5).astype('uint8')
-        side1_images.append(Image.fromarray(curr_s1, mode='L'))
-        side2_images.append(Image.fromarray(curr_s2, mode='L'))
-        pan_images.append(Image.fromarray(curr_pan, mode='L'))
-        samples.append(Image.fromarray(curr_smpl, mode='L'))
-        fileName = 'sample' + str(i) + '.jpg'
-        samples[i].save(path + '/' + nn_name + '/nn_output/' + fileName)
+    for i in tqdm(range(n), desc='Verification'):
+        file_name = 'sample' + str(i) + '.jpg'
+        ag = (l0, l1, l_trend)
+        res = Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i, AA,
+                                  r) for l in ag)
+        side1 = res[0]
+        side2 = res[1]
+        pan = res[2]
+        side1.save(path + '/verification/side1/' + file_name)
+        side2.save(path + '/verification/side2/' + file_name)
+        pan.save(path + '/verification/panorama/' + file_name)
+        side1 = (np.array(side1).reshape(1, W, H, 1) - 127.5) / 127.5
+        side2 = (np.array(side2).reshape(1, W, H, 1) - 127.5) / 127.5
+        input_data = np.concatenate((side1, side2), axis=3)
+        gen = f_gen.predict(input_data)
+        nn_img = (127.5 * gen.reshape(W, H) + 127.5).astype('uint8')
+        nn_img = Image.fromarray(nn_img, mode='L')
+        nn_img.save(path + '/verification/nn_output/' + file_name)
     print('NN output saved successfully.')
-    return (side1_images, side2_images, pan_images, samples)
 
 
 def create_tb_callback(models_path, trend_num, nn_name):
@@ -217,9 +292,7 @@ def create_tb_callback(models_path, trend_num, nn_name):
 
 
 # trend MSE metrcis
-def tr_mse(sample, tr_mse_0, r):
-    # window width
-    window = 2 * r
+def tr_mse(sample, tr_mse_0, window):
     W = sample.width
     H = sample.height
     pixel_map = sample.load()
@@ -235,37 +308,62 @@ def tr_mse(sample, tr_mse_0, r):
     return (err.mean(), err, tr)
 
 
-# fit trend MSE metrics
-def tr_mse_fit(dataset_path, trend_num, r):
-    dataset_path_with_trend = dataset_path + '/trend' + str(trend_num)
-    train_path = dataset_path_with_trend + '/train'
-    validation_path = dataset_path_with_trend + '/validation'
-    train_list = listdir(train_path + '/panorama')
-    val_list = listdir(validation_path + '/panorama')
-    N_train = len(train_list)
-    N_val = len(val_list)
+def tr_mse_nn_output(verification_path, r):
+    side1_list = listdir(verification_path + '/side1')
+    side2_list = listdir(verification_path + '/side2')
+    pan_list = listdir(verification_path + '/panorama')
+    nn_output_list = listdir(verification_path + '/nn_output')
+    N = len(nn_output_list)
     # just for parameter definition
-    img = Image.open(train_path + '/panorama/' + train_list[0])
+    img = Image.open(verification_path + '/nn_output/' + nn_output_list[0])
     W = img.width
     window = 2 * r
     steps = W - window + 1
-    train_mse = np.zeros(steps)
+    tr_side1 = np.zeros(steps)
+    tr_side2 = np.zeros(steps)
+    tr_pan = np.zeros(steps)
     val_mse = np.zeros(steps)
-    for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
-            image = Image.open(train_path + '/panorama/' + file)
-            mse, err, _ = tr_mse(image, np.zeros(steps), r)
-            train_mse += err
-    for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
-            image = Image.open(validation_path + '/panorama/' + file)
-            mse, err, _ = tr_mse(image, np.zeros(steps), r)
+    for file in tqdm(side1_list, desc='Side 1'):
+            image = Image.open(verification_path + '/side1/' + file)
+            _, _, tr = tr_mse(image, np.zeros(steps), window)
+            tr_side1 += tr
+
+    for file in tqdm(side2_list, desc='Side 2'):
+            image = Image.open(verification_path + '/side2/' + file)
+            _, _, tr = tr_mse(image, np.zeros(steps), window)
+            tr_side2 += tr
+
+    for file in tqdm(pan_list, desc='Panorama'):
+            image = Image.open(verification_path + '/panorama/' + file)
+            _, err, tr = tr_mse(image, np.zeros(steps), window)
+            tr_pan += tr
             val_mse += err
-    train_mse /= N_train
-    val_mse /= N_val
+
+    val_mse /= N
+    tr_side1 /= N
+    tr_side2 /= N
+    tr_pan /= N
+    nn_mse = 0
+    nn_err = np.zeros(steps)
+    nn_tr = np.zeros(steps)
+    for file in tqdm(nn_output_list, desc='NN output'):
+            image = Image.open(verification_path + '/nn_output/' + file)
+            mse, err, tr = tr_mse(image, val_mse, window)
+            nn_mse += mse
+            nn_err += err
+            nn_tr += tr
     try:
-        mkdir(dataset_path_with_trend + '/metrics')
+        mkdir(verification_path + '/metrics')
     except FileExistsError:
         print('Dir already exist')
-    np.save(dataset_path_with_trend + '/metrics/tmse.npy', train_mse)
-    np.save(dataset_path_with_trend + '/metrics/vmse.npy', val_mse)
+    nn_mse /= N
+    nn_err /= N
+    nn_tr /= N
+    np.save(verification_path + '/metrics/tr_side1.npy', tr_side1)
+    np.save(verification_path + '/metrics/tr_side2.npy', tr_side2)
+    np.save(verification_path + '/metrics/tr_pan.npy', tr_pan)
+    np.save(verification_path + '/metrics/nn_mse.npy', nn_mse)
+    np.save(verification_path + '/metrics/nn_err.npy', nn_err)
+    np.save(verification_path + '/metrics/nn_tr.npy', nn_tr)
     print('Metrics saved successfully.')
-    return (train_mse.mean(), val_mse.mean(), train_mse, val_mse)
+    return (nn_mse, nn_err, nn_tr, tr_side1, tr_side2, tr_pan)

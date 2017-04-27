@@ -17,7 +17,8 @@ from os import mkdir
 from joblib import Parallel, delayed
 
 
-def generate_sample(w, h, l, num, AA, val=False, side=1, save=True):
+def generate_sample(w, h, l, num, AA, val=False, side=1):
+    np.random.seed()
     # новое ч/б изображение, размером в AA**2 раз больше для суперсэмплинга
     W = w * AA
     H = h * AA
@@ -80,22 +81,20 @@ def generate_sample(w, h, l, num, AA, val=False, side=1, save=True):
                 break
     # supersampling with antialiasing
     image = image.resize((w, h))
-    if (save is True):
-        full_file_path = file_path
-        if (val is False):
-            full_file_path += "/train"
-        else:
-            full_file_path += "/validation"
-        if (side == 1):
-            full_file_path += "/side1"
-        elif (side == 2):
-            full_file_path += "/side2"
-        else:
-            full_file_path += "/panorama"
-        full_file_path += (file_name + str(num) + ext)
-        image.save(full_file_path)
+    full_file_path = file_path
+    if (val is False):
+        full_file_path += "/train"
     else:
-        return image
+        full_file_path += "/validation"
+    if (side == 1):
+        full_file_path += "/side1"
+    elif (side == 2):
+        full_file_path += "/side2"
+    else:
+        full_file_path += "/panorama"
+    full_file_path += (file_name + str(num) + ext)
+    image.save(full_file_path)
+
 
 # parsing arguments
 parser = argparse.ArgumentParser()
@@ -164,10 +163,7 @@ for i in tqdm(range(N_train), desc='Train dataset'):
 
     ag = zip((l0, l1, l_trend), (1, 2, 3))
     Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i+shift, AA, False,
-                        side, True) for l, side in ag)
-    # generate_sample(W, H, l0, AA, val=False, side=1)
-    # generate_sample(W, H, l1, i + shift, AA, val=False, side=2)
-    # generate_sample(W, H, l_trend, i + shift, AA, val=False, side=3)
+                        side) for l, side in ag)
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
     l_start = choice(l_0)
@@ -185,7 +181,4 @@ for i in tqdm(range(N_val), desc='Validation dataset'):
 
     ag = zip((l0, l1, l_trend), (1, 2, 3))
     Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i+shift, AA, True,
-                        side, True) for l, side in ag)
-    # generate_sample(W, H, l0, i + shift, AA, val=True, side=1)
-    # generate_sample(W, H, l1, i + shift, AA, val=True, side=2)
-    # generate_sample(W, H, l_trend, i + shift, AA, val=True, side=3)
+                        side) for l, side in ag)
