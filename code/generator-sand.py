@@ -103,8 +103,10 @@ parser.add_argument('trend_num', type=int)
 parser.add_argument('-W', type=int, default=256)
 parser.add_argument('-H', type=int, default=256)
 parser.add_argument('-AA', type=int, default=3)
-parser.add_argument('-l_0', type=list, default=[0.1, 0.3, 0.5, 0.7, 0.9, 1.1])
-parser.add_argument('-l_1', type=list, default=[1.6, 1.8, 2.0, 2.2, 2.4, 2.6])
+parser.add_argument('-l_0', type=float, nargs=6,
+                    default=[0.1, 0.3, 0.5, 0.7, 0.9, 1.1])
+parser.add_argument('-l_1', type=float, nargs=6,
+                    default=[1.6, 1.8, 2.0, 2.2, 2.4, 2.6])
 parser.add_argument('-r', type=int, default=3)
 parser.add_argument('-ratio', type=float, default=0.95)
 parser.add_argument('-shift', type=int, default=0)
@@ -118,6 +120,8 @@ AA = args.AA
 # linear trend l = lambda = Kx + b
 l_0 = args.l_0
 l_1 = args.l_1
+print(l_0)
+print(l_1)
 # radius
 r = args.r
 # filename & path
