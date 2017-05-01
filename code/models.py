@@ -132,7 +132,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
 
 
 # Discriminator
-def discriminator(nf, a_ch=1, b_ch=1, c_ch=1, opt=Adam(lr=1e-4, beta_1=0.2),
+def discriminator(nf, a_ch=1, b_ch=1, c_ch=1, opt=Adam(lr=1e-5, beta_1=0.2),
                   alpha=0.2, model_name='d'):
     ''' params:
     a_ch - first image channels
@@ -175,7 +175,7 @@ def discriminator(nf, a_ch=1, b_ch=1, c_ch=1, opt=Adam(lr=1e-4, beta_1=0.2),
     return d
 
 
-def pix2pix(atob, d, a_ch=1, b_ch=1, eta=100, opt=Adam(lr=1e-4, beta_1=0.2),
+def pix2pix(atob, d, a_ch=1, b_ch=1, eta=100, opt=Adam(lr=1e-5, beta_1=0.2),
             model_name='pix2pix'):
     '''
     atob - full generator

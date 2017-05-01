@@ -16,6 +16,7 @@ from numpy.random import choice, rand
 from math import log
 from os import listdir, mkdir
 from keras.utils import plot_model
+from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import TensorBoard
 from joblib import Parallel, delayed
@@ -204,15 +205,20 @@ def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
     except FileExistsError:
         print('Dir already exist')
     f_gen.save_weights(path + '/' + nn_name + '/f_gen.weights')
+    f_gen.save(path + '/' + nn_name + '/f_gen.h5')
     d.save_weights(path + '/' + nn_name + '/d.weights')
+    d.save(path + '/' + nn_name + '/d.h5')
     np.save(path + '/' + nn_name + '/losses.npy', losses)
     print('Models saved successfully')
 
 
-def load_p2p_models(models_path, trend_num, nn_name, f_gen, d):
+# def load_p2p_models(models_path, trend_num, nn_name, f_gen, d):
+def load_p2p_models(models_path, trend_num, nn_name):
     path = models_path + '/trend' + str(trend_num)
-    f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
-    d.load_weights(path + '/' + nn_name + '/d.weights')
+    # f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
+    # d.load_weights(path + '/' + nn_name + '/d.weights')
+    f_gen = load_model(path + '/' + nn_name + '/f_gen.h5')
+    d = load_model(path + '/' + nn_name + '/d.h5')
     losses = np.load(path + '/' + nn_name + '/losses.npy').item()
     return (f_gen, d, losses)
 
@@ -251,10 +257,8 @@ def plot_p2p_losses(models_path, trend_num, nn_name, losses):
 
 
 def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
-                    l_trend):
+                    l_trend, AA, r):
     path = models_path + '/trend' + str(trend_num) + '/' + nn_name
-    AA = 3
-    r = 3
 
     try:
         mkdir(path + '/verification')
