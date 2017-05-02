@@ -212,15 +212,19 @@ def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
     print('Models saved successfully')
 
 
-# def load_p2p_models(models_path, trend_num, nn_name, f_gen, d):
-def load_p2p_models(models_path, trend_num, nn_name):
+def load_p2p_models(models_path, trend_num, nn_name, f_gen, d):
     path = models_path + '/trend' + str(trend_num)
-    # f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
-    # d.load_weights(path + '/' + nn_name + '/d.weights')
-    f_gen = load_model(path + '/' + nn_name + '/f_gen.h5')
-    d = load_model(path + '/' + nn_name + '/d.h5')
+    f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
+    d.load_weights(path + '/' + nn_name + '/d.weights')
     losses = np.load(path + '/' + nn_name + '/losses.npy').item()
     return (f_gen, d, losses)
+
+
+def load_generator(models_path, trend_num, nn_name):
+    path = models_path + '/trend' + str(trend_num)
+    f_gen = load_model(path + '/' + nn_name + '/f_gen.h5')
+    f_gen.load_weights(path + '/' + nn_name + '/f_gen.weights')
+    return f_gen
 
 
 def plot_p2p_models(models_path, trend_num, nn_name, f_gen, d, p2p):

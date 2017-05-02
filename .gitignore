@@ -20,3 +20,11 @@ code/\.ipynb_checkpoints/
 text/Universiade/presentation\.log
 
 text/Universiade/universiade\.log
+
+code/trained_models/sand/trend5/nf16_cb/verification/nn_output/
+
+code/trained_models/sand/trend5/nf16_cb/verification/panorama/
+
+code/trained_models/sand/trend5/nf16_cb/verification/side1/
+
+code/trained_models/sand/trend5/nf16_cb/verification/side2/
