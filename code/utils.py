@@ -201,6 +201,10 @@ def three_image_generators(side1_train, side2_train, panorama_train,
 def save_p2p_models(models_path, trend_num, nn_name, f_gen, d, losses):
     path = models_path + '/trend' + str(trend_num)
     try:
+        mkdir(path)
+    except FileExistsError:
+        print('Dir already exist')
+    try:
         mkdir(path + '/' + nn_name)
     except FileExistsError:
         print('Dir already exist')

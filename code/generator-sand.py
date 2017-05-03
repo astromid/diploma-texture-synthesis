@@ -104,9 +104,9 @@ parser.add_argument('-W', type=int, default=256)
 parser.add_argument('-H', type=int, default=256)
 parser.add_argument('-AA', type=int, default=3)
 parser.add_argument('-l_0', type=float, nargs=6,
-                    default=[0.1, 0.3, 0.5, 0.7, 0.9, 1.1])
+                    default=None)
 parser.add_argument('-l_1', type=float, nargs=6,
-                    default=[1.6, 1.8, 2.0, 2.2, 2.4, 2.6])
+                    default=None)
 parser.add_argument('-r', type=int, default=3)
 parser.add_argument('-ratio', type=float, default=0.95)
 parser.add_argument('-shift', type=int, default=0)
@@ -120,8 +120,8 @@ AA = args.AA
 # linear trend l = lambda = Kx + b
 l_0 = args.l_0
 l_1 = args.l_1
-print(l_0)
-print(l_1)
+# print(l_0)
+# print(l_1)
 # radius
 r = args.r
 # filename & path
@@ -152,8 +152,14 @@ N_train = int(args.ratio * N)
 N_val = N - N_train
 
 for i in tqdm(range(N_train), desc='Train dataset'):
-    l_start = choice(l_0)
-    l_end = choice(l_1)
+    if l_0 is None:
+        l_start = 30 * rand()
+    else:
+        l_start = choice(l_0)
+    if l_1 is None:
+        l_end = 30 * rand()
+    else:
+        l_end = choice(l_1)
     K = (l_end - l_start) / (W * AA)
 
     def l0(x):
@@ -170,8 +176,14 @@ for i in tqdm(range(N_train), desc='Train dataset'):
                         side) for l, side in ag)
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
-    l_start = choice(l_0)
-    l_end = choice(l_1)
+    if l_0 is None:
+        l_start = 30 * rand()
+    else:
+        l_start = choice(l_0)
+    if l_1 is None:
+        l_end = 30 * rand()
+    else:
+        l_end = choice(l_1)
     K = (l_end - l_start) / (W * AA)
 
     def l0(x):
