@@ -20,7 +20,7 @@ from keras.layers.core import Activation, Dropout
 
 
 # U-Net Generator
-def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
+def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
            model_name='unet'):
     ''' params:
     input shape = (256, 256, a_ch + b_ch)
@@ -89,6 +89,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
 
     dconv3 = Conv2DTranspose(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
     dconv3 = BatchNormalization(axis=3)(dconv3)
+    dconv3 = Dropout(0.5)(dconv3)
     x = concatenate([dconv3, conv5], axis=3)
     # x = dconv3
     x = LeakyReLU(alpha)(x)
@@ -96,6 +97,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
 
     dconv4 = Conv2DTranspose(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
     dconv4 = BatchNormalization(axis=3)(dconv4)
+    dconv4 = Dropout(0.5)(dconv4)
     x = concatenate([dconv4, conv4], axis=3)
     # x = dconv4
     x = LeakyReLU(alpha)(x)
@@ -103,6 +105,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
 
     dconv5 = Conv2DTranspose(nf*4, (3, 3), padding='same', strides=(2, 2))(x)
     dconv5 = BatchNormalization(axis=3)(dconv5)
+    dconv5 = Dropout(0.5)(dconv5)
     x = concatenate([dconv5, conv3], axis=3)
     # x = dconv5
     x = LeakyReLU(alpha)(x)
@@ -110,6 +113,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, batch_size=1, alpha=0.2,
 
     dconv6 = Conv2DTranspose(nf*2, (3, 3), padding='same', strides=(2, 2))(x)
     dconv6 = BatchNormalization(axis=3)(dconv6)
+    dconv6 = Dropout(0.5)(dconv6)
     x = concatenate([dconv6, conv2], axis=3)
     # x = dconv6
     x = LeakyReLU(alpha)(x)

@@ -36,3 +36,11 @@ code/trained_models/sand/trend5/nf32_cb_eta0/verification/panorama/
 code/trained_models/sand/trend5/nf32_cb_eta0/verification/side1/
 
 code/trained_models/sand/trend5/nf32_cb_eta0/verification/side2/
+
+code/trained_models/sand/trend6/nf32_cb_eta1/verification/nn_output/
+
+code/trained_models/sand/trend6/nf32_cb_eta1/verification/panorama/
+
+code/trained_models/sand/trend6/nf32_cb_eta1/verification/side1/
+
+code/trained_models/sand/trend6/nf32_cb_eta1/verification/side2/
