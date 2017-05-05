@@ -79,7 +79,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (2, 2, nf*(8 + 8))
 
-    dconv2 = Conv2DTranspose(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv2 = Conv2DTranspose(nf*8, (2, 2), strides=(2, 2))(x)
     dconv2 = BatchNormalization(axis=3)(dconv2)
     dconv2 = Dropout(0.5)(dconv2)
     x = concatenate([dconv2, conv6], axis=3)
@@ -87,7 +87,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (4, 4, nf*(8 + 8))
 
-    dconv3 = Conv2DTranspose(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv3 = Conv2DTranspose(nf*8, (2, 2), strides=(2, 2))(x)
     dconv3 = BatchNormalization(axis=3)(dconv3)
     dconv3 = Dropout(0.5)(dconv3)
     x = concatenate([dconv3, conv5], axis=3)
@@ -95,7 +95,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (8, 8, nf*(8 + 8))
 
-    dconv4 = Conv2DTranspose(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv4 = Conv2DTranspose(nf*8, (2, 2), strides=(2, 2))(x)
     dconv4 = BatchNormalization(axis=3)(dconv4)
     dconv4 = Dropout(0.5)(dconv4)
     x = concatenate([dconv4, conv4], axis=3)
@@ -103,7 +103,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (16, 16, nf*(8 + 8))
 
-    dconv5 = Conv2DTranspose(nf*4, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv5 = Conv2DTranspose(nf*4, (2, 2), strides=(2, 2))(x)
     dconv5 = BatchNormalization(axis=3)(dconv5)
     dconv5 = Dropout(0.5)(dconv5)
     x = concatenate([dconv5, conv3], axis=3)
@@ -111,7 +111,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (32, 32, nf*(4 + 4))
 
-    dconv6 = Conv2DTranspose(nf*2, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv6 = Conv2DTranspose(nf*2, (2, 2), strides=(2, 2))(x)
     dconv6 = BatchNormalization(axis=3)(dconv6)
     dconv6 = Dropout(0.5)(dconv6)
     x = concatenate([dconv6, conv2], axis=3)
@@ -119,14 +119,14 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     x = LeakyReLU(alpha)(x)
     # (64, 64, nf*(2 + 2))
 
-    dconv7 = Conv2DTranspose(nf, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv7 = Conv2DTranspose(nf, (2, 2), strides=(2, 2))(x)
     dconv7 = BatchNormalization(axis=3)(dconv7)
     x = concatenate([dconv7, conv1], axis=3)
     # x = dconv7
     x = LeakyReLU(alpha)(x)
     # (128, 128, nf*(1 + 1))
 
-    dconv8 = Conv2DTranspose(out_ch, (3, 3), padding='same', strides=(2, 2))(x)
+    dconv8 = Conv2DTranspose(out_ch, (2, 2), strides=(2, 2))(x)
     # (256, 256, out_ch)
 
     out = Activation('tanh')(dconv8)
