@@ -174,23 +174,23 @@ def three_image_generators(side1_train, side2_train, panorama_train,
                            side1_val, side2_val, panorama_val, batch_size=50):
     side1_train_gen = ImageDataGenerator(
             vertical_flip=True).flow(side1_train,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
     side2_train_gen = ImageDataGenerator(
             vertical_flip=True).flow(side2_train,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
     pan_train_gen = ImageDataGenerator(
             vertical_flip=True).flow(panorama_train,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
 
     side1_val_gen = ImageDataGenerator(
             vertical_flip=True).flow(side1_val,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
     side2_val_gen = ImageDataGenerator(
             vertical_flip=True).flow(side2_val,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
     pan_val_gen = ImageDataGenerator(
             vertical_flip=True).flow(panorama_val,
-                                     batch_size=batch_size, shuffle=False)
+                                     batch_size=batch_size, shuffle=True)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)

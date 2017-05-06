@@ -34,7 +34,7 @@ def d_generator(data_gen, atob, dout_size):
 
 
 def train_discriminator(d, data_gen, steps_per_epoch=40, cb=[]):
-    return d.fit_generator(data_gen, steps_per_epoch=steps_per_epoch,
+    return d.fit_generator(data_gen, steps_per_epoch=steps_per_epoch*2,
                            epochs=1, verbose=1, callbacks=cb)
 
 
