@@ -108,15 +108,17 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
         panorama_train = np.empty((N_train, W, H, 1))
         for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
             image = Image.open(train_path + '/panorama/' + file)
-            panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            panorama_train[i] /= 127.5
+            # panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # panorama_train[i] /= 127.5
+            panorama_train[i] = np.array(image).reshape(W, H, 1)
 
         # load and normalization validation images
         panorama_val = np.empty((N_val, W, H, 1))
         for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
             image = Image.open(validation_path + '/panorama/' + file)
-            panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            panorama_val[i] /= 127.5
+            # panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # panorama_val[i] /= 127.5
+            panorama_val[i] = np.array(image).reshape(W, H, 1)
 
         return (panorama_train, panorama_val)
 
@@ -128,16 +130,19 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
         for i, file in enumerate(tqdm(train_list, desc='Train dataset')):
             image = Image.open(train_path + '/side1/' + file)
-            side1_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            side1_train[i] /= 127.5
+            # side1_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # side1_train[i] /= 127.5
+            side1_train[i] = np.array(image).reshape(W, H, 1)
 
             image = Image.open(train_path + '/side2/' + file)
-            side2_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            side2_train[i] /= 127.5
+            # side2_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # side2_train[i] /= 127.5
+            side2_train[i] = np.array(image).reshape(W, H, 1)
 
             image = Image.open(train_path + '/panorama/' + file)
-            panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            panorama_train[i] /= 127.5
+            # panorama_train[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # panorama_train[i] /= 127.5
+            panorama_train[i] = np.array(image).reshape(W, H, 1)
 
         side1_val = np.empty((N_val, W, H, 1))
         side2_val = np.empty((N_val, W, H, 1))
@@ -145,16 +150,19 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
 
         for i, file in enumerate(tqdm(val_list, desc='Validation dataset')):
             image = Image.open(validation_path + '/side1/' + file)
-            side1_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            side1_val[i] /= 127.5
+            # side1_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # side1_val[i] /= 127.5
+            side1_val[i] = np.array(image).reshape(W, H, 1)
 
             image = Image.open(validation_path + '/side2/' + file)
-            side2_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            side2_val[i] /= 127.5
+            # side2_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # side2_val[i] /= 127.5
+            side2_val[i] = np.array(image).reshape(W, H, 1)
 
             image = Image.open(validation_path + '/panorama/' + file)
-            panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
-            panorama_val[i] /= 127.5
+            # panorama_val[i] = (np.array(image).reshape(W, H, 1)) - 127.5
+            # panorama_val[i] /= 127.5
+            panorama_val[i] = np.array(image).reshape(W, H, 1)
 
         return (side1_train, side2_train, panorama_train,
                 side1_val, side2_val, panorama_val, N_train, N_val)
@@ -173,24 +181,24 @@ def one_image_generators(panorama_train, panorama_val, batch_size=50):
 def three_image_generators(side1_train, side2_train, panorama_train,
                            side1_val, side2_val, panorama_val, batch_size=50):
     side1_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_train,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(side1_train,
+                                      batch_size=batch_size, shuffle=True)
     side2_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_train,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(side2_train,
+                                      batch_size=batch_size, shuffle=True)
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_train,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(panorama_train,
+                                      batch_size=batch_size, shuffle=True)
 
     side1_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side1_val,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(side1_val,
+                                      batch_size=batch_size, shuffle=True)
     side2_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(side2_val,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(side2_val,
+                                      batch_size=batch_size, shuffle=True)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_val,
-                                     batch_size=batch_size, shuffle=True)
+            vertical_flip=False).flow(panorama_val,
+                                      batch_size=batch_size, shuffle=True)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)
@@ -277,7 +285,7 @@ def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
     except FileExistsError:
         print('Dir already exist')
     for i in tqdm(range(n), desc='Verification'):
-        file_name = 'sample' + str(i) + '.jpg'
+        file_name = 'sample' + str(i) + '.png'
         ag = (l0, l1, l_trend)
         res = Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i, AA,
                                   r) for l in ag)
@@ -287,34 +295,40 @@ def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
         side1.save(path + '/verification/side1/' + file_name)
         side2.save(path + '/verification/side2/' + file_name)
         pan.save(path + '/verification/panorama/' + file_name)
-        side1 = (np.array(side1).reshape(1, W, H, 1) - 127.5) / 127.5
-        side2 = (np.array(side2).reshape(1, W, H, 1) - 127.5) / 127.5
+        # side1 = (np.array(side1).reshape(1, W, H, 1) - 127.5) / 127.5
+        # side2 = (np.array(side2).reshape(1, W, H, 1) - 127.5) / 127.5
+        side1 = np.array(side1).reshape(1, W, H, 1)
+        side2 = np.array(side2).reshape(1, W, H, 1)
         input_data = np.concatenate((side1, side2), axis=3)
         gen = f_gen.predict(input_data)
-        nn_img = (127.5 * gen.reshape(W, H) + 127.5).astype('uint8')
-        nn_img = Image.fromarray(nn_img, mode='L')
+        # nn_img = (127.5 * gen.reshape(W, H) + 127.5).astype('uint8')
+        nn_img = gen.reshape(W, H).astype('uint8')
+        nn_img = Image.fromarray(nn_img, mode='L').convert('1')
         nn_img.save(path + '/verification/nn_output/' + file_name)
     print('NN output saved successfully.')
 
-
+'''
 def create_tb_callback(models_path, trend_num, nn_name):
     path = models_path + '/trend' + str(trend_num) + '/' + nn_name + '/tb_logs'
     tbCallback = TensorBoard(log_dir=path, histogram_freq=1, write_images=True)
     return tbCallback
+'''
 
 
 # trend MSE metrcis
 def tr_mse(sample, tr_mse_0, window):
     W = sample.width
     H = sample.height
-    pixel_map = sample.load()
+    # pixel_map = sample.load()
+    pixel_map = np.asarray(sample)
     steps = W - window + 1
     tr = np.zeros(steps)
     for shift in range(steps):
         window_sum = 0
         for i in range(window):
-            for j in range(H):
-                window_sum += abs(pixel_map[shift+i, j] - 255) / 255
+            # for j in range(H):
+            #    window_sum += abs(pixel_map[shift+i, j] - 255) / 255
+            window_sum += np.sum(pixel_map[shift+i, :])
         tr[shift] = window_sum / (window * H)
     err = (tr - tr_mse_0) ** 2
     return (err.mean(), err, tr)

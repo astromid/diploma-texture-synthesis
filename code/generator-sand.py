@@ -126,7 +126,7 @@ l_1 = args.l_1
 r = args.r
 # filename & path
 file_name = "/sample"
-ext = ".jpg"
+ext = ".png"
 trend_num = args.trend_num
 file_path = "../data/sand/trend" + str(trend_num)
 shift = args.shift

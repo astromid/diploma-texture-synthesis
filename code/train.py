@@ -34,7 +34,7 @@ def d_generator(data_gen, atob, dout_size):
 
 
 def train_discriminator(d, data_gen, steps_per_epoch=40, cb=[]):
-    return d.fit_generator(data_gen, steps_per_epoch=steps_per_epoch*2,
+    return d.fit_generator(data_gen, steps_per_epoch=steps_per_epoch,
                            epochs=1, verbose=1, callbacks=cb)
 
 
@@ -83,15 +83,15 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     steps_per_epoch = np.ceil(train_samples / batch_size)
     val_steps = np.ceil(val_samples / batch_size)
     # create callbacks
-    reduce_lr_d = ReduceLROnPlateau(monitor='loss', factor=0.2,
-                                    patience=5, min_lr=1e-7)
-    reduce_lr_p2p = ReduceLROnPlateau(monitor='loss', factor=0.2,
-                                      patience=5, min_lr=1e-7)
+    # reduce_lr_d = ReduceLROnPlateau(monitor='loss', factor=0.2,
+    #                                patience=5, min_lr=1e-7)
+    # reduce_lr_p2p = ReduceLROnPlateau(monitor='loss', factor=0.2,
+    #                                  patience=5, min_lr=1e-7)
     # train loop
     for e in tnrange(epochs, desc='Epoches'):
         clear_output()
         train_iteration(d, p2p, d_gen_train, p2p_gen_train, losses,
-                        steps_per_epoch, [reduce_lr_d], [reduce_lr_p2p])
+                        steps_per_epoch)
         # evaluate metrics
         metrics(d_gen_val, p2p_gen_val, d, p2p, losses, val_steps)
     return losses
