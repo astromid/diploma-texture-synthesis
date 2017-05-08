@@ -10,7 +10,7 @@ Created on Thu Apr  6 23:16:12 2017
 import argparse
 import numpy as np
 from PIL import Image, ImageDraw
-from numpy.random import choice, rand
+from numpy.random import choice, uniform
 from math import log
 from tqdm import tqdm
 from os import mkdir
@@ -28,9 +28,9 @@ def generate_sample(w, h, l, num, AA, val=False, side=1):
     l_u = l(W)
     x = 0
     while(int(x) < W):
-        u1 = rand()
+        u1 = uniform()
         x -= log(u1) / l_u
-        u2 = rand()
+        u2 = uniform()
         if (u2 <= l(x) / l_u):
             try:
                 X[int(x)] += 1
@@ -153,11 +153,11 @@ N_val = N - N_train
 
 for i in tqdm(range(N_train), desc='Train dataset'):
     if l_0 is None:
-        l_start = 30 * rand()
+        l_start = 30 * uniform()
     else:
         l_start = choice(l_0)
     if l_1 is None:
-        l_end = 30 * rand()
+        l_end = 30 * uniform()
     else:
         l_end = choice(l_1)
     K = (l_end - l_start) / (W * AA)
@@ -177,11 +177,11 @@ for i in tqdm(range(N_train), desc='Train dataset'):
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
     if l_0 is None:
-        l_start = 30 * rand()
+        l_start = 30 * uniform()
     else:
         l_start = choice(l_0)
     if l_1 is None:
-        l_end = 30 * rand()
+        l_end = 30 * uniform()
     else:
         l_end = choice(l_1)
     K = (l_end - l_start) / (W * AA)

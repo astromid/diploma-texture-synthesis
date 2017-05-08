@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
 from PIL import Image, ImageDraw
-from numpy.random import choice, rand
+from numpy.random import choice, uniform
 from math import log
 from os import listdir, mkdir
 from keras.utils import plot_model
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import TensorBoard
+# from keras.callbacks import TensorBoard
 from joblib import Parallel, delayed
 
 
@@ -33,9 +33,9 @@ def generate_sample(w, h, l, num, AA, r):
     l_u = l(W)
     x = 0
     while(int(x) < W):
-        u1 = rand()
+        u1 = uniform()
         x -= log(u1) / l_u
-        u2 = rand()
+        u2 = uniform()
         if (u2 <= l(x) / l_u):
             try:
                 X[int(x)] += 1
@@ -302,7 +302,7 @@ def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
         input_data = np.concatenate((side1, side2), axis=3)
         gen = f_gen.predict(input_data)
         # nn_img = (127.5 * gen.reshape(W, H) + 127.5).astype('uint8')
-        nn_img = gen.reshape(W, H).astype('uint8')
+        nn_img = gen.reshape(W, H).astype('uint8') * 255
         nn_img = Image.fromarray(nn_img, mode='L').convert('1')
         nn_img.save(path + '/verification/nn_output/' + file_name)
     print('NN output saved successfully.')
@@ -319,16 +319,17 @@ def create_tb_callback(models_path, trend_num, nn_name):
 def tr_mse(sample, tr_mse_0, window):
     W = sample.width
     H = sample.height
-    # pixel_map = sample.load()
-    pixel_map = np.asarray(sample)
+    pixel_map = sample.load()
+    # pixel_map = np.asarray(sample)
     steps = W - window + 1
     tr = np.zeros(steps)
     for shift in range(steps):
         window_sum = 0
         for i in range(window):
-            # for j in range(H):
-            #    window_sum += abs(pixel_map[shift+i, j] - 255) / 255
-            window_sum += np.sum(pixel_map[shift+i, :])
+            for j in range(H):
+                window_sum += abs(pixel_map[shift+i, j] - 255) / 255
+                # window_sum += abs(pixel_map[shift+i, j] - 1) / 1
+            # window_sum += np.sum(abs(pixel_map[shift+i, :] - 1))
         tr[shift] = window_sum / (window * H)
     err = (tr - tr_mse_0) ** 2
     return (err.mean(), err, tr)
