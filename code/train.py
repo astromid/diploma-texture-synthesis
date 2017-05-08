@@ -91,7 +91,7 @@ def train(atob, d, p2p, train_gen, val_gen, epochs, train_samples, val_samples,
     for e in tnrange(epochs, desc='Epoches'):
         clear_output()
         train_iteration(d, p2p, d_gen_train, p2p_gen_train, losses,
-                        steps_per_epoch)
+                        steps_per_epoch, None, None)
         # evaluate metrics
         metrics(d_gen_val, p2p_gen_val, d, p2p, losses, val_steps)
     return losses
