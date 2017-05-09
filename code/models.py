@@ -129,8 +129,7 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     dconv8 = Conv2DTranspose(out_ch, (2, 2), strides=(2, 2))(x)
     # (256, 256, out_ch)
 
-    # out = Activation('tanh')(dconv8)
-    out = Activation('sigmoid')(dconv8)
+    out = Activation('tanh')(dconv8)
     unet = Model(i, out, name=model_name)
 
     return unet
@@ -166,7 +165,7 @@ def discriminator(nf, a_ch=1, b_ch=1, c_ch=1, opt=Adam(lr=1e-4, beta_1=0.2),
     # (16, 16, nf*8)
 
     conv5 = Conv2D(1, (3, 3), padding='same', strides=(2, 2))(x)
-    out = Activation('sigmoid')(conv5)
+    out = Activation('tanh')(conv5)
     # (8, 8, 1)
 
     d = Model(i, out, name=model_name)
