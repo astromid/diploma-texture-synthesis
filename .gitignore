@@ -21,7 +21,7 @@ text/Universiade/presentation\.log
 
 text/Universiade/universiade\.log
 
-code/trained_models/sand/trend5/nf16_cb/verification/nn_output/
+code/trained_models/sand/trend*/nf*/verification/*/
 
 code/trained_models/sand/trend5/nf16_cb/verification/panorama/
 
@@ -44,3 +44,11 @@ code/trained_models/sand/trend6/nf32_cb_eta1/verification/panorama/
 code/trained_models/sand/trend6/nf32_cb_eta1/verification/side1/
 
 code/trained_models/sand/trend6/nf32_cb_eta1/verification/side2/
+
+code/trained_models/sand/trend8/nf64_eta50/verification/nn_output/
+
+code/trained_models/sand/trend8/nf64_eta50/verification/panorama/
+
+code/trained_models/sand/trend8/nf64_eta50/verification/side1/
+
+code/trained_models/sand/trend8/nf64_eta50/verification/side2/
