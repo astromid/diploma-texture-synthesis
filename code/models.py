@@ -31,37 +31,37 @@ def g_unet(nf, a_ch=1, b_ch=1, out_ch=1, alpha=0.2,
     i = Input(shape=(256, 256, a_ch + b_ch))
     # (256, 256, a_ch + b_ch)
 
-    conv1 = Conv2D(nf, (3, 3), padding='same', strides=(2, 2))(i)
+    conv1 = Conv2D(nf, (2, 2), padding='same', strides=(2, 2))(i)
     conv1 = BatchNormalization(axis=3)(conv1)
     x = LeakyReLU(alpha)(conv1)
     # (128, 128, nf)
 
-    conv2 = Conv2D(nf*2, (3, 3), padding='same', strides=(2, 2))(x)
+    conv2 = Conv2D(nf*2, (2, 2), padding='same', strides=(2, 2))(x)
     conv2 = BatchNormalization(axis=3)(conv2)
     x = LeakyReLU(alpha)(conv2)
     # (64, 64, nf*2)
 
-    conv3 = Conv2D(nf*4, (3, 3), padding='same', strides=(2, 2))(x)
+    conv3 = Conv2D(nf*4, (2, 2), padding='same', strides=(2, 2))(x)
     conv3 = BatchNormalization(axis=3)(conv3)
     x = LeakyReLU(alpha)(conv3)
     # (32, 32, nf*4)
 
-    conv4 = Conv2D(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    conv4 = Conv2D(nf*8, (2, 2), padding='same', strides=(2, 2))(x)
     conv4 = BatchNormalization(axis=3)(conv4)
     x = LeakyReLU(alpha)(conv4)
     # (16, 16, nf*8)
 
-    conv5 = Conv2D(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    conv5 = Conv2D(nf*8, (2, 2), padding='same', strides=(2, 2))(x)
     conv5 = BatchNormalization(axis=3)(conv5)
     x = LeakyReLU(alpha)(conv5)
     # (8, 8, nf*8)
 
-    conv6 = Conv2D(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    conv6 = Conv2D(nf*8, (2, 2), padding='same', strides=(2, 2))(x)
     conv6 = BatchNormalization(axis=3)(conv6)
     x = LeakyReLU(alpha)(conv6)
     # (4, 4, nf*8)
 
-    conv7 = Conv2D(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    conv7 = Conv2D(nf*8, (2, 2), padding='same', strides=(2, 2))(x)
     conv7 = BatchNormalization(axis=3)(conv7)
     x = LeakyReLU(alpha)(conv7)
     # (2, 2, nf*8)
@@ -148,23 +148,23 @@ def discriminator(nf, a_ch=1, b_ch=1, c_ch=1, opt=Adam(lr=1e-4, beta_1=0.2),
     i = Input(shape=(256, 256, a_ch + b_ch + c_ch))
     # (256, 256, a_ch + b_ch + c_ch)
 
-    conv1 = Conv2D(nf, (3, 3), padding='same', strides=(2, 2))(i)
+    conv1 = Conv2D(nf, (2, 2), padding='same', strides=(2, 2))(i)
     x = LeakyReLU(alpha)(conv1)
     # (128, 128, nf)
 
-    conv2 = Conv2D(nf*2, (3, 3), padding='same', strides=(2, 2))(x)
+    conv2 = Conv2D(nf*2, (2, 2), padding='same', strides=(2, 2))(x)
     x = LeakyReLU(alpha)(conv2)
     # (64, 64, nf*2)
 
-    conv3 = Conv2D(nf*4, (3, 3), padding='same', strides=(2, 2))(x)
+    conv3 = Conv2D(nf*4, (2, 2), padding='same', strides=(2, 2))(x)
     x = LeakyReLU(alpha)(conv3)
     # (32, 32, nf*4)
 
-    conv4 = Conv2D(nf*8, (3, 3), padding='same', strides=(2, 2))(x)
+    conv4 = Conv2D(nf*8, (2, 2), padding='same', strides=(2, 2))(x)
     x = LeakyReLU(alpha)(conv4)
     # (16, 16, nf*8)
 
-    conv5 = Conv2D(1, (3, 3), padding='same', strides=(2, 2))(x)
+    conv5 = Conv2D(1, (2, 2), padding='same', strides=(2, 2))(x)
     out = Activation('tanh')(conv5)
     # (8, 8, 1)
 

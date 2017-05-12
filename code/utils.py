@@ -302,7 +302,7 @@ def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
         input_data = np.concatenate((side1, side2), axis=3)
         gen = f_gen.predict(input_data)
         # nn_img = (127.5 * gen.reshape(W, H) + 127.5).astype('uint8')
-        nn_img = gen.reshape(W, H).astype('uint8') * 255
+        nn_img = (255 * gen.reshape(W, H)).astype('uint8')
         nn_img = Image.fromarray(nn_img, mode='L').convert('1')
         nn_img.save(path + '/verification/nn_output/' + file_name)
     print('NN output saved successfully.')
@@ -321,7 +321,7 @@ def tr_mse(sample, tr_mse_0, window):
     H = sample.height
     pixel_map = sample.load()
     # pixel_map = np.asarray(sample)
-    steps = W - window + 1
+    steps = W - window
     tr = np.zeros(steps)
     for shift in range(steps):
         window_sum = 0
@@ -345,7 +345,7 @@ def tr_mse_nn_output(verification_path, r):
     img = Image.open(verification_path + '/nn_output/' + nn_output_list[0])
     W = img.width
     window = 2 * r
-    steps = W - window + 1
+    steps = W - window
     tr_side1 = np.zeros(steps)
     tr_side2 = np.zeros(steps)
     tr_pan = np.zeros(steps)
