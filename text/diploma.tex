@@ -1,5 +1,5 @@
 \documentclass[a4paper]{article}
-\usepackage[12pt]{extsizes}
+\usepackage[14pt]{extsizes}
 \usepackage[utf8]{inputenc}
 \usepackage[T2A]{fontenc}
 \usepackage{amssymb,amsmath,mathtext}
@@ -10,6 +10,7 @@
 \usepackage[left=30mm, top=20mm, right=10mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
 
 \graphicspath{{graphs/}}
+\onehalfspacing
 \begin{document}
 	\renewcommand\refname{\centering СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ}
 	%титульный лист
@@ -42,17 +43,17 @@
 	\addcontentsline{toc}{section}{СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ}
 	\begin{thebibliography}{99}
 		\bibitem{Voron-ML}  Воронцов К. В., "Математические методы обучения по прецедентам (теория обучения машин)".
-		\bibitem{algorithm-of-articsic-style} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge, "A Neural Algorithm of Artistic Style" // arXiv: 1508.06576v2 [cs.CV], 2015.
+		\bibitem{GAN} Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bign Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio, "Generative Adversarial Nets" // arXiv: 1406.2661 [stat.ML], 2014.
+		\bibitem{algorithm-of-articsic-style} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge, "A Neural Algorithm of Artistic Style" // arXiv: 1508.06576 [cs.CV], 2015.
 		\bibitem{cGAN-face} Jon Gauthier, "Conditional generative adversarial nets for convolutional face generation", Tech. rep., 2015.
-		\bibitem{cGAN} Mehdi Mirza, Simon Osindero, "Conditional Generative Adversarial Nets" // arXiv: 1411.1784v1 [cs.LG], 2014.
+		\bibitem{cGAN} Mehdi Mirza, Simon Osindero, "Conditional Generative Adversarial Nets" // arXiv: 1411.1784 [cs.LG], 2014.
 		\bibitem{p2p} Pedro Costa, Adrian Galdran, Maria Inês Meyer, Michael David Abràmoff, Meindert Niemeijer, Ana Maria Mendonça, Aurélio Campilho, "Towards Adversarial Retinal Image Synthesis" // arXiv: 1701.08974 [cs.CV], 2017.
-		\bibitem{cond-image-gen-pixelCNN} A\"aron van den Oord, Nal Kalchbrenner, Oriol Vinyals, Lasse Espeholt, Alex Graves, Koray Kavukcuoglu, "Conditional Image Generation with PixelCNN Decoders" // arXiv: 1606.05328v2 [cs.CV], 2016.
-		\bibitem{cond-image-synth-with-clf-GANs} Augustus Odena, Christopher Olah, Jonathon Shlens, "Conditional Image Synthesis with Auxiliary Classifier GANs" // arXiv: 1610.09585v1 [stat.ML], 2016.
-		\bibitem{DC-IGN} Tejas D. Kulkarni, Will Whitney, Pushmeet Kohli, Joshua B. Tenenbaum, "Deep Convolutional Inverse Graphics Network" // arXiv: 1503.03167v4 [cs.CV], 2015.
-		\bibitem{EBGAN} Junbo Zhao, Michael Mathien, Yann LeCun, "Energy-based Generative Adversarial Networks" // arXiv: 1609.03126v3 [cs.LG], 2016.
-		\bibitem{GAN} Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bign Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio, "Generative Adversarial Nets" // arXiv: 1406.2661v1 [stat.ML], 2014.
-		\bibitem{MRF-and-CNN-synthesis} Chuan Li, Michael Wand, "Combining Markov Random Fields and Convolutional Neural Networks for Image Synthesis" // arXiv: 1601.04589v1 [cs.CV], 2016.
-		\bibitem{texture-networks} Dmitry Ulyanov, Vadim Lebedev, Andrea Vedaldi, Victor Lempitsky, "Texture Networks: Feed-forward Synthesis of Textures and Stylized Images" // arXiv: 1603.03417v1 [cs.CV], 2016.
+		\bibitem{cond-image-gen-pixelCNN} A\"aron van den Oord, Nal Kalchbrenner, Oriol Vinyals, Lasse Espeholt, Alex Graves, Koray Kavukcuoglu, "Conditional Image Generation with PixelCNN Decoders" // arXiv: 1606.05328 [cs.CV], 2016.
+		\bibitem{cond-image-synth-with-clf-GANs} Augustus Odena, Christopher Olah, Jonathon Shlens, "Conditional Image Synthesis with Auxiliary Classifier GANs" // arXiv: 1610.09585 [stat.ML], 2016.
+		\bibitem{DC-IGN} Tejas D. Kulkarni, Will Whitney, Pushmeet Kohli, Joshua B. Tenenbaum, "Deep Convolutional Inverse Graphics Network" // arXiv: 1503.03167 [cs.CV], 2015.
+		\bibitem{EBGAN} Junbo Zhao, Michael Mathien, Yann LeCun, "Energy-based Generative Adversarial Networks" // arXiv: 1609.03126 [cs.LG], 2016.
+		\bibitem{MRF-and-CNN-synthesis} Chuan Li, Michael Wand, "Combining Markov Random Fields and Convolutional Neural Networks for Image Synthesis" // arXiv: 1601.04589 [cs.CV], 2016.
+		\bibitem{texture-networks} Dmitry Ulyanov, Vadim Lebedev, Andrea Vedaldi, Victor Lempitsky, "Texture Networks: Feed-forward Synthesis of Textures and Stylized Images" // arXiv: 1603.03417 [cs.CV], 2016.
 		\bibitem{keras} François Chollet, Keras, 2015. Software available from github.com/fchollet/keras.
 		\bibitem{tf} Martín Abadi, Ashish Agarwal, Paul Barham, Eugene Brevdo,
 		Zhifeng Chen, Craig Citro, Greg S. Corrado, Andy Davis,
