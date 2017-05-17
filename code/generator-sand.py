@@ -177,11 +177,11 @@ for i in tqdm(range(N_train), desc='Train dataset'):
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
     if l_0 is None:
-        l_start = 30 * uniform()
+        l_start = 35 * uniform()
     else:
         l_start = choice(l_0)
     if l_1 is None:
-        l_end = 30 * uniform()
+        l_end = 35 * uniform()
     else:
         l_end = choice(l_1)
     K = (l_end - l_start) / (W * AA)

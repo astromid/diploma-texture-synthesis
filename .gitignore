@@ -28,3 +28,5 @@ code/trained_models/sand/trend*/nf*/verification/side2/
 code/trained_models/sand/trend*/nf*/verification/panorama/
 
 code/trained_models/sand/trend*/nf*/verification/nn_output/
+
+*.log
