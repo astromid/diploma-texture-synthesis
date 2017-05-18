@@ -62,3 +62,11 @@ code/trained_models/sand/trend8/nf64_eta1_3x3_rmsprop/d\.weights
 code/trained_models/sand/trend8/nf64_eta1_3x3_rmsprop/f_gen\.h5
 
 code/trained_models/sand/trend8/nf64_eta1_3x3_rmsprop/f_gen\.weights
+
+code/trained_models/sand/trend9/nf64_eta5_3x3_rms/d\.h5
+
+code/trained_models/sand/trend9/nf64_eta5_3x3_rms/f_gen\.weights
+
+code/trained_models/sand/trend9/nf64_eta5_3x3_rms/f_gen\.h5
+
+code/trained_models/sand/trend9/nf64_eta5_3x3_rms/d\.weights
