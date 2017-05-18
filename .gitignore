@@ -70,3 +70,5 @@ code/trained_models/sand/trend9/nf64_eta5_3x3_rms/f_gen\.weights
 code/trained_models/sand/trend9/nf64_eta5_3x3_rms/f_gen\.h5
 
 code/trained_models/sand/trend9/nf64_eta5_3x3_rms/d\.weights
+
+data/dust/trend1/
