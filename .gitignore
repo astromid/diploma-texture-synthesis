@@ -152,3 +152,11 @@ code/trained_models/dust/trend1/nf64_eta5_3x3_3/d\.weights
 code/trained_models/dust/trend1/nf64_eta5_3x3_3/f_gen\.h5
 
 code/trained_models/dust/trend1/nf64_eta5_3x3_3/f_gen\.weights
+
+code/trained_models/dust/trend*/nf*/verification/side1/
+
+code/trained_models/dust/trend*/nf*/verification/side2/
+
+code/trained_models/dust/trend*/nf*/verification/panorama/
+
+code/trained_models/dust/trend*/nf*/verification/nn_output/

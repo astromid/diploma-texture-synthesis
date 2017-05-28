@@ -22,7 +22,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from joblib import Parallel, delayed
 
 
-def generate_sample(w, h, l, num, AA, r):
+def generate_sample_sand(w, h, l, num, AA, r):
     np.random.seed()
     # новое ч/б изображение, размером в AA**2 раз больше для суперсэмплинга
     W = w * AA
@@ -47,7 +47,6 @@ def generate_sample(w, h, l, num, AA, r):
     # карта заполнения, чтобы предотвратить взаимопроникновение "песчинок"
     pixel_map = image.load()
     # x's loop
-    # for x in tqdm(range(W), desc='Side ' + str(side), leave=False):
     for x in range(W):
         # находим недоступные на данный момент y
         banned_y = set()
@@ -86,6 +85,32 @@ def generate_sample(w, h, l, num, AA, r):
                 break
     # supersampling with antialiasing
     image = image.resize((w, h))
+    return image
+
+
+def generate_sample_dust(w, h, l, num):
+    np.random.seed()
+    # новое ч/б изображение, размером в AA**2 раз больше для суперсэмплинга
+    # generate x and counts
+    X = np.zeros(w)
+    l_u = l(w)
+    x = 0
+    while(int(x) < w):
+        u1 = uniform()
+        x -= log(u1) / l_u
+        u2 = uniform()
+        if (u2 <= l(x) / l_u):
+            try:
+                X[int(x)] += 1
+            except IndexError:
+                break
+    X = X.astype('int')
+    image = Image.new('1', (w, h), 'white')
+    draw = ImageDraw.Draw(image)
+    for x in range(w):
+        for j in range(X[x]):
+            y = choice(range(w))
+            draw.point((x, y), fill='black')
     return image
 
 
@@ -273,7 +298,7 @@ def plot_p2p_losses(models_path, trend_num, nn_name, losses):
 
 
 def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
-                    l_trend, AA, r):
+                    l_trend, AA, r, sand):
     path = models_path + '/trend' + str(trend_num) + '/' + nn_name
 
     try:
@@ -287,8 +312,12 @@ def nn_verification(models_path, trend_num, nn_name, f_gen, n, W, H, l0, l1,
     for i in tqdm(range(n), desc='Verification'):
         file_name = 'sample' + str(i) + '.png'
         ag = (l0, l1, l_trend)
-        res = Parallel(n_jobs=-1)(delayed(generate_sample)(W, H, l, i, AA,
-                                  r) for l in ag)
+        if (sand is True):
+            res = Parallel(n_jobs=-1)(delayed(generate_sample_sand)(W, H, l, i,
+                                      AA, r) for l in ag)
+        else:
+            res = Parallel(n_jobs=-1)(delayed(generate_sample_dust)(W, H, l,
+                                      i) for l in ag)
         side1 = res[0]
         side2 = res[1]
         pan = res[2]
