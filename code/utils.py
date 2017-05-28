@@ -369,7 +369,10 @@ def tr_mse_nn_output(verification_path, r):
     side2_list = listdir(verification_path + '/side2')
     pan_list = listdir(verification_path + '/panorama')
     nn_output_list = listdir(verification_path + '/nn_output')
-    N = len(nn_output_list)
+    N_nn = len(nn_output_list)
+    N_s1 = len(side1_list)
+    N_s2 = len(side2_list)
+    N_p = len(pan_list)
     # just for parameter definition
     img = Image.open(verification_path + '/nn_output/' + nn_output_list[0])
     W = img.width
@@ -395,10 +398,10 @@ def tr_mse_nn_output(verification_path, r):
             tr_pan += tr
             val_mse += err
 
-    val_mse /= N
-    tr_side1 /= N
-    tr_side2 /= N
-    tr_pan /= N
+    val_mse /= N_p
+    tr_side1 /= N_s1
+    tr_side2 /= N_s2
+    tr_pan /= N_p
     nn_mse = 0
     nn_err = np.zeros(steps)
     nn_tr = np.zeros(steps)
@@ -412,9 +415,9 @@ def tr_mse_nn_output(verification_path, r):
         mkdir(verification_path + '/metrics')
     except FileExistsError:
         print('Dir already exist')
-    nn_mse /= N
-    nn_err /= N
-    nn_tr /= N
+    nn_mse /= N_nn
+    nn_err /= N_nn
+    nn_tr /= N_nn
     np.save(verification_path + '/metrics/tr_side1.npy', tr_side1)
     np.save(verification_path + '/metrics/tr_side2.npy', tr_side2)
     np.save(verification_path + '/metrics/tr_pan.npy', tr_pan)

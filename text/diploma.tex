@@ -8,6 +8,7 @@
 \usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{pscyr}
+\usepackage{booktabs}
 \usepackage[left=30mm, top=20mm, right=10mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
 \graphicspath{{graphs/}}
 \onehalfspacing
@@ -30,40 +31,42 @@
 	\input{4-convolution}
 	% GAN
 	\input{5-GAN}
-	% Синтез текстур
-	\input{6-texture-synthesis}
 	% Стохастическая оптимизация
-	\input{7-optimizer}
+	\input{6-optimizer}
 	% TR-MSE
-	\input{8-verification}
+	\input{7-verification}
 	% Результаты
-	\input{9-results}
+	\input{8-results}
 	\addcontentsline{toc}{section}{ВЫВОДЫ}
 	% ВЫВОДЫ
-	\input{10-conclusions}
+	\input{9-conclusions}
 	\addcontentsline{toc}{section}{ЗАКЛЮЧЕНИЕ}
 	% ЗАКЛЮЧЕНИЕ
-	\input{11-conclusion}
+	\input{10-conclusion}
 	\addcontentsline{toc}{section}{СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ}
 	\begin{thebibliography}{99}
+		\bibitem{texture-synthesis-using-CNN} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge: "Texture Synthesis Using Convolutional Neural Networks" // arXiv: 1505.07376 [cs.CV], 2015.
+		\bibitem{texture-networks} Dmitry Ulyanov, Vadim Lebedev, Andrea Vedaldi, Victor Lempitsky: "Texture Networks: Feed-forward Synthesis of Textures and Stylized Images" // arXiv: 1603.03417 [cs.CV], 2016.
 		\bibitem{Voron-ML}  Воронцов К. В.: "Математические методы обучения по прецедентам (теория обучения машин)".
-		\bibitem{CNN-original} LeCun, Y., Boser, B., Denker, J.S., Henderson, D., Howard, R.E., Hubbard, W., Jackel, L.D.: "Backpropagation applied to handwritten zip code recognition" // Neural Comput. 1(4), 541–551, 1989.
-		\bibitem{BEGAN} David Berthelot, Thomas Schumm, Luke Metz: "BEGAN: Boundary Equilibrium Generative Adversarial Networks" // arXiv: 1703.10717 [cs.LG], 2017.
 		\bibitem{GAN-original} Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bign Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio: "Generative Adversarial Nets" // arXiv: 1406.2661 [stat.ML], 2014.
-		\bibitem{algorithm-of-articsic-style} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge: "A Neural Algorithm of Artistic Style" // arXiv: 1508.06576 [cs.CV], 2015.
-		\bibitem{cGAN-face} Jon Gauthier: "Conditional generative adversarial nets for convolutional face generation", Tech. rep., 2015.
 		\bibitem{cGAN} Mehdi Mirza, Simon Osindero: "Conditional Generative Adversarial Nets" // arXiv: 1411.1784 [cs.LG], 2014.
-		\bibitem{p2p} Pedro Costa, Adrian Galdran, Maria Inês Meyer, Michael David Abràmoff, Meindert Niemeijer, Ana Maria Mendonça, Aurélio Campilho: "Towards Adversarial Retinal Image Synthesis" // arXiv: 1701.08974 [cs.CV], 2017.
+		\bibitem{cGAN-face} Jon Gauthier: "Conditional generative adversarial nets for convolutional face generation", Tech. rep., 2015.
+		\bibitem{EBGAN} Junbo Zhao, Michael Mathien, Yann LeCun: "Energy-based Generative Adversarial Networks" // arXiv: 1609.03126 [cs.LG], 2016.
+		\bibitem{BEGAN} David Berthelot, Thomas Schumm, Luke Metz: "BEGAN: Boundary Equilibrium Generative Adversarial Networks" // arXiv: 1703.10717 [cs.LG], 2017.
+		\bibitem{CNN-original} LeCun, Y., Boser, B., Denker, J.S., Henderson, D., Howard, R.E., Hubbard, W., Jackel, L.D.: "Backpropagation applied to handwritten zip code recognition" // Neural Comput. 1(4), 541–551, 1989.
+		\bibitem{pix2pix} Phillip Isola, Jun-Yan Zhu, Tinghui Zhou, Alexei A. Efros: "Image-to-Image Translation with Conditional Adversarial Networks" // arXiv: 1611.07004 [cs.CV], 2016.
+		\bibitem{p2p-vessnet} Pedro Costa, Adrian Galdran, Maria Inês Meyer, Michael David Abràmoff, Meindert Niemeijer, Ana Maria Mendonça, Aurélio Campilho: "Towards Adversarial Retinal Image Synthesis" // arXiv: 1701.08974 [cs.CV], 2017.
+		\bibitem{unet} Olaf Ronneberger, Philipp Fischer, Thomas Brox: "U-Net: Convolutional Networks for Biomedical Image Segmentation" // arXiv: 1505.04597 [cs.CV], 2015.
+		\bibitem{algorithm-of-articsic-style} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge: "A Neural Algorithm of Artistic Style" // arXiv: 1508.06576 [cs.CV], 2015.
+		
 		\bibitem{cond-image-gen-pixelCNN} A\"aron van den Oord, Nal Kalchbrenner, Oriol Vinyals, Lasse Espeholt, Alex Graves, Koray Kavukcuoglu: "Conditional Image Generation with PixelCNN Decoders" // arXiv: 1606.05328 [cs.CV], 2016.
 		\bibitem{cond-image-synth-with-clf-GANs} Augustus Odena, Christopher Olah, Jonathon Shlens: "Conditional Image Synthesis with Auxiliary Classifier GANs" // arXiv: 1610.09585 [stat.ML], 2016.
 		\bibitem{DC-IGN} Tejas D. Kulkarni, Will Whitney, Pushmeet Kohli, Joshua B. Tenenbaum: "Deep Convolutional Inverse Graphics Network" // arXiv: 1503.03167 [cs.CV], 2015.
-		\bibitem{EBGAN} Junbo Zhao, Michael Mathien, Yann LeCun: "Energy-based Generative Adversarial Networks" // arXiv: 1609.03126 [cs.LG], 2016.
+		
 		\bibitem{MRF-and-CNN-synthesis} Chuan Li, Michael Wand: "Combining Markov Random Fields and Convolutional Neural Networks for Image Synthesis" // arXiv: 1601.04589 [cs.CV], 2016.
-		\bibitem{texture-networks} Dmitry Ulyanov, Vadim Lebedev, Andrea Vedaldi, Victor Lempitsky: "Texture Networks: Feed-forward Synthesis of Textures and Stylized Images" // arXiv: 1603.03417 [cs.CV], 2016.
-		\bibitem{texture-synthesis-using-CNN} Leon A. Gatys, Alexander S. Ecker, Matthias Bethge: "Texture Synthesis Using Convolutional Neural Networks" // arXiv: 1505.07376 [cs.CV], 2015.
 		\bibitem{keras} François Chollet: Keras, 2015. Software available from http://keras.io/.
 		\bibitem{tf} Martín Abadi, Ashish Agarwal, Paul Barham, Eugene Brevdo, Zhifeng Chen, Craig Citro, Greg S. Corrado, Andy Davis, Jeffrey Dean, Matthieu Devin, Sanjay Ghemawat, Ian Goodfellow, Andrew Harp, Geoffrey Irving, Michael Isard, Rafal Jozefowicz, Yangqing Jia, Lukasz Kaiser, Manjunath Kudlur, Josh Levenberg, Dan Mané, Mike Schuster, Rajat Monga, Sherry Moore, Derek Murray, Chris Olah, Jonathon Shlens, Benoit Steiner, Ilya Sutskever, Kunal Talwar, Paul Tucker, Vincent Vanhoucke, Vijay Vasudevan, Fernanda Viégas, Oriol Vinyals, Pete Warden, Martin Wattenberg, Martin Wicke, Yuan Yu, and Xiaoqiang Zheng: "TensorFlow: Large-scale machine learning on heterogeneous systems", 2015. Software available from http://tensorflow.org/.
 	\end{thebibliography}
 	\addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ}
-	\input{12-supplement}
+	\input{11-supplement}
 \end{document}
