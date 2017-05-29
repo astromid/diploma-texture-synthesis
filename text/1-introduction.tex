@@ -13,9 +13,12 @@
 		\item Изменяющимся свойством является интенсивность появления частиц $\lambda$
 		\item Тренд является линейным и направлен вдоль оси изображения $z_1$: 
 		$ \lambda = \lambda_{init} + k z_1 $
+		\item По оси $z_2$ остается равномерное распределение частиц
 	\end{itemize}
 	
-	Каждый такой тренд фиксируется, соответственно, значениями $\lambda_{init}$ и $\lambda_{final}$. Пример подобного изображения с трендом приведен на (Рис. \ref{1-trend-example}):
+	Каждый такой тренд фиксируется значениями $\lambda_{init}$ и $\lambda_{final}$. Соответсвенно, 
+	$$k = \frac{\lambda_{final} - \lambda_{init}}{256}$$
+	Пример подобного изображения с трендом приведен на (Рис. \ref{1-trend-example}):
 	
 	\begin{figure}[h]
 		\centering{\includegraphics[width=\linewidth]{1-introduction/trend-example}}
