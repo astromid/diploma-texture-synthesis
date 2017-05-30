@@ -160,3 +160,7 @@ code/trained_models/dust/trend*/nf*/verification/side2/
 code/trained_models/dust/trend*/nf*/verification/panorama/
 
 code/trained_models/dust/trend*/nf*/verification/nn_output/
+
+*.h5
+
+*.weights
