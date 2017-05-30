@@ -193,37 +193,37 @@ def load_dataset(dataset_path, trend_num, mode=3, W=256, H=256):
                 side1_val, side2_val, panorama_val, N_train, N_val)
 
 
-def one_image_generators(panorama_train, panorama_val, batch_size=50):
+def one_image_generators(panorama_train, panorama_val, batch_size=50, vf=False, sf=True):
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_train,
-                                     batch_size=batch_size, shuffle=False)
+            vertical_flip=vf).flow(panorama_train,
+                                     batch_size=batch_size, shuffle=sf)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=True).flow(panorama_val,
-                                     batch_size=batch_size, shuffle=False)
+            vertical_flip=vf).flow(panorama_val,
+                                     batch_size=batch_size, shuffle=sf)
     return (pan_train_gen, pan_val_gen)
 
 
 def three_image_generators(side1_train, side2_train, panorama_train,
-                           side1_val, side2_val, panorama_val, batch_size=50):
+                           side1_val, side2_val, panorama_val, batch_size=50, vf=False, sf=True):
     side1_train_gen = ImageDataGenerator(
-            vertical_flip=False).flow(side1_train,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(side1_train,
+                                      batch_size=batch_size, shuffle=sf)
     side2_train_gen = ImageDataGenerator(
-            vertical_flip=False).flow(side2_train,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(side2_train,
+                                      batch_size=batch_size, shuffle=sf)
     pan_train_gen = ImageDataGenerator(
-            vertical_flip=False).flow(panorama_train,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(panorama_train,
+                                      batch_size=batch_size, shuffle=sf)
 
     side1_val_gen = ImageDataGenerator(
-            vertical_flip=False).flow(side1_val,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(side1_val,
+                                      batch_size=batch_size, shuffle=sf)
     side2_val_gen = ImageDataGenerator(
-            vertical_flip=False).flow(side2_val,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(side2_val,
+                                      batch_size=batch_size, shuffle=sf)
     pan_val_gen = ImageDataGenerator(
-            vertical_flip=False).flow(panorama_val,
-                                      batch_size=batch_size, shuffle=True)
+            vertical_flip=vf).flow(panorama_val,
+                                      batch_size=batch_size, shuffle=sf)
 
     # генераторы, возвращающие тройки изображений
     train_gen = zip(side1_train_gen, side2_train_gen, pan_train_gen)

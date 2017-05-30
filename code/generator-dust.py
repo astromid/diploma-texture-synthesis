@@ -105,12 +105,13 @@ N_train = int(args.ratio * N)
 N_val = N - N_train
 
 for i in tqdm(range(N_train), desc='Train dataset'):
+    np.random.seed()
     if l_0 is None:
-        l_start = 35 * uniform()
+        l_start = 50 * uniform()
     else:
         l_start = choice(l_0)
     if l_1 is None:
-        l_end = 35 * uniform()
+        l_end = 50 * uniform()
     else:
         l_end = choice(l_1)
     K = (l_end - l_start) / W
@@ -129,12 +130,13 @@ for i in tqdm(range(N_train), desc='Train dataset'):
                         side) for l, side in ag)
 
 for i in tqdm(range(N_val), desc='Validation dataset'):
+    np.random.seed()
     if l_0 is None:
-        l_start = 35 * uniform()
+        l_start = 50 * uniform()
     else:
         l_start = choice(l_0)
     if l_1 is None:
-        l_end = 35 * uniform()
+        l_end = 50 * uniform()
     else:
         l_end = choice(l_1)
     K = (l_end - l_start) / W
