@@ -17,14 +17,15 @@
 
 \setbeamertemplate{navigation symbols}{}
 
-\usetheme{Berlin}
+\usetheme{boxes}
+\usecolortheme{seahorse}
 
 \setbeamerfont{frametitle}{series=\bfseries}
 \setbeamerfont{block title}{series=\bfseries}
 
 \begin{document}
 	\title{Нейросетевой синтез текстур с трендами}
-	\author{Будакян Я.\,С.}
+	\author{Будакян Я. С. \and \break \break Научный руководитель: к. т. н., доцент Грачев Е. А.}
 	\date{Москва, 2017 г.} 
 
 	\maketitle
@@ -101,12 +102,12 @@
 		\end{columns}
 	\end{frame}
 	
-	\begin{frame}{Оценка качества синтеза}
+	\begin{frame}{Оценка качества синтеза текстур}
 		Вводится специальная метрика, которая будет учитывать наличие в изображении тренда интенсивности частиц. Рассмотрим среднюю плотность черных пикселей в некотором окне $\xi_k$, и пройдем этим окном по изображению.
 		$$\xi_k = \frac{1}{H w}{\sum_{i=k}^{k+w} \sum_{j=0}^{H}\left| \frac{x(i, j) - 255}{255} \right|}, $$$$k = \overline{1, W - w} $$
 	\end{frame}
 	
-	\begin{frame}{Оценка качества синтеза}
+	\begin{frame}{Оценка качества синтеза текстур}
 		Построив график $\xi(k)$, можно увидеть, как меняется плотность черных пикселей и прослеживается ли тренд.
 		
 		\begin{figure}[h!]
@@ -116,7 +117,7 @@
 		\end{figure}
 	\end{frame}
 	
-	\begin{frame}{Оценка качества синтеза}
+	\begin{frame}{Оценка качества синтеза текстур}
 		В качестве метрики можно взять среднеквадратичную ошибку:
 		$$ \xi = \frac{K}{W-w}\sum_{k=1}^{W-w} (\xi_k - \xi_{0k})^2,$$
 		где $\xi_{0k}$ - это $\xi_k$, усредненное по изображениям, содержащим истинный тренд, а $K$ - нормировочный множитель, вводимый для того, чтобы метрики сетей, обученных на разных выборках можно было сравнивать между собой.
@@ -127,7 +128,7 @@
 			\begin{center}
 				\begin{tabular}{p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm}}
 					\toprule
-					Вход 1 & Вход 2 & Тренд & Сеть nf8 & nf16 & nf16woU & nf32 \\
+					Вход 1 & Вход 2 & Тренд & nf8 & nf16 & nf16woU & nf32 \\
 					\cmidrule(r){1-1}\cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(l){7-7}
 					\includegraphics[width=1\linewidth]{8-results/sand-trend2/left1}
 					&
@@ -212,7 +213,7 @@
 			\begin{center}
 				\begin{tabular}{p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm}}
 					\toprule
-					Вход 1 & Вход 2 & Тренд & Сеть nf32e5 & nf64e1 & nf64e5 & nf64e10 \\
+					Вход 1 & Вход 2 & Тренд & nf32e5 & nf64e1 & nf64e5 & nf64e10 \\
 					\cmidrule(r){1-1}\cmidrule(lr){2-2}\cmidrule(lr){3-3}\cmidrule(lr){4-4}\cmidrule(lr){5-5}\cmidrule(lr){6-6}\cmidrule(l){7-7}
 					\includegraphics[width=1\linewidth]{8-results/sand-trend8/left1}
 					&
@@ -302,6 +303,16 @@
 	
 	\begin{frame}
 		\centering\huge{Спасибо за внимание!}
+	\end{frame}
+	
+	\begin{frame}{Минимизационная задача}
+		Обучение нейронной сети является задачей многопараметрической оптимизации функционала потерь. Для используемых в этой работе сетей данная задача ставится так:
+		 $$ L(G, D) = L_{adv}(G, D) + \eta L1$$
+		 $$L1 = \mathbb{E}_{p_{data}(s_1, s_2, r)} (\parallel r - G(s_1, s_2) \parallel_1)$$
+		 $$ L_{adv}(G, D) = \mathbb{E}_{p_{data}(s_1, s_2, r)}\log D(s_1, s_2, r)+ $$
+		 $$ +  \mathbb{E}_{p_{data}(s_1, s_2)} \log (1 - D(s_1, s_2, G(s_1, s_2))) $$
+		 $$ D^* = \underset{D}{\arg\min} L(G^*, D)  $$
+		 $$ G^* = \underset{G}{\arg\min} L(G, D^*)  $$
 	\end{frame}
 
 \end{document}
